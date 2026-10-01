@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +15,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
+interface StoreSettings {
+  banner_url: string;
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -35,14 +39,34 @@ function MenuPage() {
   const cart = useCart();
   const [open, setOpen] = useState(false);
   const [activeCat, setActiveCat] = useState<string | null>(null);
+  const [bannerUrl, setBannerUrl] = useState<string | null>(null);
 
   const settings = data?.settings;
   const isOpen = settings?.is_open ?? false;
   const fee = Number(settings?.delivery_fee ?? 0);
 
+  useEffect(() => {
+    async function fetchBanner() {
+      const { data, error } = await supabase.from("store_settings").select("banner_url").eq("id", 1).single();
+
+      if (!error && data) {
+        setBannerUrl(data.banner_url);
+      }
+    }
+
+    fetchBanner();
+  }, []);
+
   return (
     <div className="min-h-screen pb-28">
       <SiteHeader storeName={settings?.store_name} />
+      {bannerUrl && (
+        <section className="bg-primary text-primary-foreground">
+          <div className="mx-auto max-w-6xl px-4 pb-10 pt-8">
+            <img src={bannerUrl} alt="Banner" className="w-full rounded-lg" />
+          </div>
+        </section>
+      )}
       <section className="bg-primary text-primary-foreground">
         <div className="mx-auto max-w-6xl px-4 pb-10 pt-8">
           <h1 className="text-4xl text-secondary sm:text-6xl">{settings?.store_name ?? "CARTOON BURGUER"}</h1>
@@ -242,7 +266,16 @@ function CartAndCheckout({ fee, isOpen, onDone }: { fee: number; isOpen: boolean
             <div>
               <Label>Pagamento na entrega</Label>
               <RadioGroup value={form.payment} onValueChange={(v) => setForm({ ...form, payment: v })} className="mt-2 grid grid-cols-3 gap-2">
-                {[["dinheiro", "Dinheiro"], ["pix", "Pix"], ["cartao", "Cartão"]].map(([v, l]) => (
+                {[[
+                  "dinheiro",
+                  "Dinheiro"
+                ], [
+                  "pix",
+                  "Pix"
+                ], [
+                  "cartao",
+                  "Cartão"
+                ]].map(([v, l]) => (
                   <Label key={v!} className="flex cursor-pointer items-center gap-2 rounded-lg border border-border p-3 has-[:checked]:border-primary">
                     <RadioGroupItem value={v!} /> {l}
                   </Label>

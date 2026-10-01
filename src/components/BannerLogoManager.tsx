@@ -34,10 +34,9 @@ export function BannerLogoManager({ type }: BannerLogoManagerProps) {
       return;
     }
 
-    const { error: updateError } = await supabase.from("store_settings").upsert({
-      key: type,
-      value: signedUrlData.signedUrl,
-    });
+    const { error: updateError } = await supabase.from("store_settings").update({
+      [type === "banner" ? "banner_url" : "logo_url"]: signedUrlData.signedUrl,
+    }).eq("id", 1);
 
     if (updateError) {
       toast.error("Erro ao atualizar configurações.");
