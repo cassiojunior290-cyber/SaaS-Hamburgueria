@@ -20,17 +20,23 @@ export function BannerLogoManager({ type }: BannerLogoManagerProps) {
     const fileName = `${type}-${Math.random()}.${fileExt}`;
     const filePath = `${type}s/${fileName}`;
 
-    const { data, error } = await supabase.storage.from("public").upload(filePath, file);
+    const { data, error } = await supabase.storage.from("product-images").upload(filePath, file);
 
     if (error) {
       toast.error("Erro ao fazer upload.");
       return;
     }
 
-    const { data: urlData } = supabase.storage.from("public").getPublicUrl(filePath);
-    const { error: updateError } = await supabase.from("settings").upsert({
+    const { data: signedUrlData, error: signedUrlError } = await supabase.storage.from("product-images").createSignedUrl(filePath, 3600);
+
+    if (signedUrlError) {
+      toast.error("Erro ao gerar URL assinada.");
+      return;
+    }
+
+    const { error: updateError } = await supabase.from("store_settings").upsert({
       key: type,
-      value: urlData.publicUrl,
+      value: signedUrlData.signedUrl,
     });
 
     if (updateError) {
