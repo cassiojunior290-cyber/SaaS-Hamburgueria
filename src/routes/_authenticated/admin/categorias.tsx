@@ -24,20 +24,20 @@ function AdminCategories() {
     e.preventDefault();
     if (!name.trim()) return;
     const { error } = await supabase.from("categories").insert({ name: name.trim(), display_order: (data?.length ?? 0) + 1 });
-    if (error) return toast.error("Erro ao criar.");
+    if (error) { toast.error("Erro ao criar."); return; }
     setName("");
     refresh();
   }
   async function save(id: string, patch: { name?: string; display_order?: number }) {
     const { error } = await supabase.from("categories").update(patch).eq("id", id);
-    if (error) return toast.error("Erro ao salvar.");
+    if (error) { toast.error("Erro ao salvar."); return; }
     toast.success("Salvo");
     refresh();
   }
   async function del(id: string) {
     if (!confirm("Excluir categoria? Os produtos ficarão sem categoria.")) return;
     const { error } = await supabase.from("categories").delete().eq("id", id);
-    if (error) return toast.error("Erro ao excluir.");
+    if (error) { toast.error("Erro ao excluir."); return; }
     refresh();
   }
 

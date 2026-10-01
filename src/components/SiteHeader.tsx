@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth, useIsAdmin } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 
-export function SiteHeader({ storeName = "CARTOON BURGUER" }: { storeName?: string }) {
+export function SiteHeader({ storeName = "CARTOON BURGUER" }: { storeName?: string | undefined }) {
   const { user } = useAuth();
   const isAdmin = useIsAdmin(user);
   const navigate = useNavigate();

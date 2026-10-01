@@ -42,7 +42,7 @@ function AdminProducts() {
     const { error } = await supabase.storage.from("product-images").upload(path, file, { contentType: file.type });
     if (error) {
       setUploading(false);
-      return toast.error("Falha no envio da imagem.");
+      { toast.error("Falha no envio da imagem."); return; }
     }
     const { data: s } = await supabase.storage.from("product-images").createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
     setUploading(false);
@@ -53,7 +53,7 @@ function AdminProducts() {
     e.preventDefault();
     if (!form) return;
     const price = Number(form.price.replace(",", "."));
-    if (!form.name.trim() || isNaN(price) || price < 0) return toast.error("Informe nome e preço válidos.");
+    if (!form.name.trim() || isNaN(price) || price < 0) { toast.error("Informe nome e preço válidos."); return; }
     const row = {
       name: form.name.trim(),
       description: form.description.trim() || null,
@@ -64,7 +64,7 @@ function AdminProducts() {
       display_order: form.display_order,
     };
     const { error } = form.id ? await supabase.from("products").update(row).eq("id", form.id) : await supabase.from("products").insert(row);
-    if (error) return toast.error("Erro ao salvar.");
+    if (error) { toast.error("Erro ao salvar."); return; }
     toast.success("Produto salvo");
     setForm(null);
     refresh();
@@ -73,7 +73,7 @@ function AdminProducts() {
   async function del(id: string) {
     if (!confirm("Excluir este produto?")) return;
     const { error } = await supabase.from("products").delete().eq("id", id);
-    if (error) return toast.error("Erro ao excluir.");
+    if (error) { toast.error("Erro ao excluir."); return; }
     refresh();
   }
 

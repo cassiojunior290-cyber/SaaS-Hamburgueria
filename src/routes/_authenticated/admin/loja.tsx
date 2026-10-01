@@ -24,9 +24,9 @@ function AdminStore() {
   async function save(e: React.FormEvent) {
     e.preventDefault();
     const fee = Number(f.delivery_fee.replace(",", "."));
-    if (!f.store_name.trim() || isNaN(fee) || fee < 0) return toast.error("Verifique os campos.");
+    if (!f.store_name.trim() || isNaN(fee) || fee < 0) { toast.error("Verifique os campos."); return; }
     const { error } = await supabase.from("store_settings").update({ store_name: f.store_name.trim(), delivery_fee: fee, is_open: f.is_open }).eq("id", 1);
-    if (error) return toast.error("Erro ao salvar.");
+    if (error) { toast.error("Erro ao salvar."); return; }
     toast.success("Configurações salvas");
     qc.invalidateQueries({ queryKey: ["admin-settings"] });
     qc.invalidateQueries({ queryKey: ["menu"] });

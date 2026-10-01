@@ -243,8 +243,8 @@ function CartAndCheckout({ fee, isOpen, onDone }: { fee: number; isOpen: boolean
               <Label>Pagamento na entrega</Label>
               <RadioGroup value={form.payment} onValueChange={(v) => setForm({ ...form, payment: v })} className="mt-2 grid grid-cols-3 gap-2">
                 {[["dinheiro", "Dinheiro"], ["pix", "Pix"], ["cartao", "Cartão"]].map(([v, l]) => (
-                  <Label key={v} className="flex cursor-pointer items-center gap-2 rounded-lg border border-border p-3 has-[:checked]:border-primary">
-                    <RadioGroupItem value={v} /> {l}
+                  <Label key={v!} className="flex cursor-pointer items-center gap-2 rounded-lg border border-border p-3 has-[:checked]:border-primary">
+                    <RadioGroupItem value={v!} /> {l}
                   </Label>
                 ))}
               </RadioGroup>
