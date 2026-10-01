@@ -26,7 +26,7 @@ function AdminOrders() {
     const n = nextStatus(status);
     if (!n) return;
     const { error } = await supabase.from("orders").update({ status: n }).eq("id", id);
-    if (error) return toast.error("Erro ao atualizar status.");
+    if (error) { toast.error("Erro ao atualizar status."); return; }
     toast.success(`Status: ${STATUS_LABEL[n]}`);
     qc.invalidateQueries({ queryKey: ["admin-orders"] });
   }
@@ -38,7 +38,7 @@ function AdminOrders() {
       <h1 className="mb-4 text-3xl">Pedidos</h1>
       <div className="mb-4 flex flex-wrap gap-2">
         {[["ativos", "Em andamento"], ...STATUS_FLOW.map((s) => [s, STATUS_LABEL[s]]), ["todos", "Todos"]].map(([v, l]) => (
-          <Button key={v} size="sm" variant={filter === v ? "default" : "outline"} onClick={() => setFilter(v)}>{l}</Button>
+          <Button key={v} size="sm" variant={filter === v ? "default" : "outline"} onClick={() => setFilter(v!)}>{l}</Button>
         ))}
       </div>
       {isLoading && <p className="text-muted-foreground">Carregando...</p>}
