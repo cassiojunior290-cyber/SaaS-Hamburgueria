@@ -197,6 +197,27 @@ export type Database = {
           },
         ]
       }
+      settings: {
+        Row: {
+          created_at: string
+          id: number
+          key: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          id?: never
+          key: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          id?: never
+          key?: string
+          value?: string
+        }
+        Relationships: []
+      }
       store_settings: {
         Row: {
           delivery_fee: number
