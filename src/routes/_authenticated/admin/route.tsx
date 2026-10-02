@@ -26,20 +26,23 @@ function AdminLayout() {
         <p className="p-8">Acesso restrito a administradores.</p>
       ) : (
         <div className="mx-auto max-w-6xl px-4 py-6">
-          <nav className="mb-6 flex gap-2 overflow-x-auto">
+          <nav className="mb-6 flex snap-x gap-2 overflow-x-auto scroll-smooth pb-1">
             {links.map((l) => (
               <Link
                 key={l.to}
                 to={l.to}
+                onClick={(e) => e.currentTarget.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" })}
                 activeOptions={{ exact: true }}
-                className="whitespace-nowrap rounded-full border border-border px-4 py-1.5 text-sm font-semibold"
-                activeProps={{ className: "bg-primary text-primary-foreground border-primary" }}
+                className="snap-start whitespace-nowrap rounded-full border border-border px-4 py-1.5 text-sm font-semibold transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-primary"
+                activeProps={{ className: "-translate-y-0.5 bg-primary text-primary-foreground border-primary shadow-md" }}
               >
                 {l.label}
               </Link>
             ))}
           </nav>
-          <Outlet />
+          <div key={typeof window !== "undefined" ? undefined : undefined} className="animate-fade-in">
+            <Outlet />
+          </div>
         </div>
       )}
     </div>

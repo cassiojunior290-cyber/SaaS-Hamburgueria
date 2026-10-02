@@ -27,7 +27,7 @@ export function BannerLogoManager({ type }: BannerLogoManagerProps) {
       return;
     }
 
-    const { data: signedUrlData, error: signedUrlError } = await supabase.storage.from("product-images").createSignedUrl(filePath, 3600);
+    const { data: signedUrlData, error: signedUrlError } = await supabase.storage.from("product-images").createSignedUrl(filePath, 60 * 60 * 24 * 365 * 10);
 
     if (signedUrlError) {
       toast.error("Erro ao gerar URL assinada.");
