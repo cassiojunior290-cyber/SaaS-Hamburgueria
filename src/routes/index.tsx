@@ -20,7 +20,46 @@ interface StoreBranding {
   banner_url: string | null;
   logo_url: string | null;
 }
-...
+export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Cardápio — CARTOON BURGUER" },
+      { name: "description", content: "Veja o cardápio da CARTOON BURGUER e faça seu pedido para entrega." },
+      { property: "og:title", content: "Cardápio — CARTOON BURGUER" },
+      { property: "og:description", content: "Hambúrgueres, acompanhamentos e bebidas com entrega." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: MenuPage,
+});
+
+function MenuPage() {
+  const { data, isLoading, error } = useQuery(menuQuery);
+  const cart = useCart();
+  const [open, setOpen] = useState(false);
+  const [activeCat, setActiveCat] = useState<string | null>(null);
+  const [branding, setBranding] = useState<StoreBranding | null>(null);
+
+  const settings = data?.settings;
+  const isOpen = settings?.is_open ?? false;
+  const fee = Number(settings?.delivery_fee ?? 0);
+
+  useEffect(() => {
+    async function fetchBranding() {
+      const { data, error } = await supabase.from("store_settings").select("banner_url, logo_url").eq("id", 1).single();
+
+      if (!error && data) {
+        setBranding(data);
+      }
+    }
+
+    fetchBranding();
+  }, []);
+
+  return (
+    <div className="min-h-screen pb-28">
+      <SiteHeader storeName={settings?.store_name} />
       <section className="bg-primary text-primary-foreground">
         {branding?.banner_url && (
           <div className="relative">
