@@ -104,14 +104,19 @@ function MenuPage() {
 
       {data && data.categories.length > 0 && (
         <nav className="sticky top-[57px] z-20 border-b border-border bg-background/95 backdrop-blur">
-          <div className="mx-auto flex max-w-6xl gap-2 overflow-x-auto px-4 py-3">
+          <div className="mx-auto flex max-w-6xl snap-x gap-2 overflow-x-auto scroll-smooth px-4 py-3">
             {data.categories.map((c) => (
               <a
                 key={c.id}
                 href={`#cat-${c.id}`}
-                onClick={() => setActiveCat(c.id)}
-                className={`whitespace-nowrap rounded-full border px-4 py-1.5 text-sm font-semibold transition ${
-                  activeCat === c.id ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-primary"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setActiveCat(c.id);
+                  document.getElementById(`cat-${c.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  e.currentTarget.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+                }}
+                className={`snap-start whitespace-nowrap rounded-full border px-4 py-1.5 text-sm font-semibold transition-all duration-300 ease-out ${
+                  activeCat === c.id ? "-translate-y-0.5 border-primary bg-primary text-primary-foreground shadow-md" : "border-border hover:-translate-y-0.5 hover:border-primary"
                 }`}
               >
                 {c.name}
@@ -132,9 +137,9 @@ function MenuPage() {
               <h2 className="mb-4 text-2xl">{c.name}</h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {prods.map((p) => (
-                  <article key={p.id} className="flex overflow-hidden rounded-2xl border border-border bg-card shadow-sm sm:flex-col">
-                    <div className="aspect-square w-32 shrink-0 bg-muted sm:aspect-[4/3] sm:w-full">
-                      {p.image_url && <img src={p.image_url} alt={p.name} loading="lazy" className="h-full w-full object-cover" />}
+                  <article key={p.id} className="group flex overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary hover:shadow-lg sm:flex-col">
+                    <div className="aspect-square w-32 shrink-0 overflow-hidden bg-muted sm:aspect-[4/3] sm:w-full">
+                      {p.image_url && <img src={p.image_url} alt={p.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" />}
                     </div>
                     <div className="flex flex-1 flex-col gap-2 p-4">
                       <h3 className="font-sans text-base font-bold">{p.name}</h3>
