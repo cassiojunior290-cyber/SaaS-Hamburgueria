@@ -16,70 +16,49 @@ import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
-interface StoreSettings {
-  banner_url: string;
+interface StoreBranding {
+  banner_url: string | null;
+  logo_url: string | null;
 }
-
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Cardápio — CARTOON BURGUER" },
-      { name: "description", content: "Veja o cardápio da CARTOON BURGUER e faça seu pedido para entrega." },
-      { property: "og:title", content: "Cardápio — CARTOON BURGUER" },
-      { property: "og:description", content: "Hambúrgueres, acompanhamentos e bebidas com entrega." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: MenuPage,
-});
-
-function MenuPage() {
-  const { data, isLoading, error } = useQuery(menuQuery);
-  const cart = useCart();
-  const [open, setOpen] = useState(false);
-  const [activeCat, setActiveCat] = useState<string | null>(null);
-  const [bannerUrl, setBannerUrl] = useState<string | null>(null);
-
-  const settings = data?.settings;
-  const isOpen = settings?.is_open ?? false;
-  const fee = Number(settings?.delivery_fee ?? 0);
-
-  useEffect(() => {
-    async function fetchBanner() {
-      const { data, error } = await supabase.from("store_settings").select("banner_url").eq("id", 1).single();
-
-      if (!error && data) {
-        setBannerUrl(data.banner_url);
-      }
-    }
-
-    fetchBanner();
-  }, []);
-
-  return (
-    <div className="min-h-screen pb-28">
-      <SiteHeader storeName={settings?.store_name} />
-      {bannerUrl && (
-        <section className="bg-primary text-primary-foreground">
-          <div className="mx-auto max-w-6xl px-4 pb-10 pt-8">
-            <img src={bannerUrl} alt="Banner" className="w-full rounded-lg" />
-          </div>
-        </section>
-      )}
+...
       <section className="bg-primary text-primary-foreground">
-        <div className="mx-auto max-w-6xl px-4 pb-10 pt-8">
-          <h1 className="text-4xl text-secondary sm:text-6xl">{settings?.store_name ?? "CARTOON BURGUER"}</h1>
-          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-background">
-            <span
-              className={`inline-flex items-center gap-2 rounded-full px-3 py-1 font-semibold ${
-                isOpen ? "bg-success text-background" : "bg-destructive text-destructive-foreground"
-              }`}
-            >
-              <span className="h-2 w-2 rounded-full bg-background" />
-              {isOpen ? "Aberto agora" : "Fechado"}
-            </span>
-            <span>Taxa de entrega: {brl(fee)}</span>
+        {branding?.banner_url && (
+          <div className="relative">
+            <img
+              src={branding.banner_url}
+              alt="Banner da loja"
+              className="h-44 w-full object-cover sm:h-56"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />
+          </div>
+        )}
+        <div className={`mx-auto max-w-6xl px-4 pb-8 ${branding?.banner_url ? "-mt-14" : "pt-8"}`}>
+          <div className="flex items-end gap-4">
+            {branding?.logo_url && (
+              <img
+                src={branding.logo_url}
+                alt="Logo da loja"
+                className="relative z-10 h-24 w-24 shrink-0 rounded-full border-4 border-secondary object-cover shadow-xl sm:h-28 sm:w-28"
+              />
+            )}
+            <div className="min-w-0 pb-1">
+              <h1 className="truncate text-2xl text-secondary sm:text-3xl">
+                {settings?.store_name ?? "CARTOON BURGUER"}
+              </h1>
+              <div className="mt-2 flex flex-wrap items-center gap-2 text-xs sm:text-sm">
+                <span
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-semibold ${
+                    isOpen ? "bg-success text-background" : "bg-destructive text-destructive-foreground"
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-background" />
+                  {isOpen ? "Aberto agora" : "Fechado"}
+                </span>
+                <span className="rounded-full bg-background/10 px-3 py-1 font-medium text-background">
+                  Entrega {brl(fee)}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
