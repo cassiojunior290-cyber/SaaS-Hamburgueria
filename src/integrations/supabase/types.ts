@@ -220,23 +220,29 @@ export type Database = {
       }
       store_settings: {
         Row: {
+          banner_url: string | null
           delivery_fee: number
           id: number
           is_open: boolean
+          logo_url: string | null
           store_name: string
           updated_at: string
         }
         Insert: {
+          banner_url?: string | null
           delivery_fee?: number
           id?: number
           is_open?: boolean
+          logo_url?: string | null
           store_name?: string
           updated_at?: string
         }
         Update: {
+          banner_url?: string | null
           delivery_fee?: number
           id?: number
           is_open?: boolean
+          logo_url?: string | null
           store_name?: string
           updated_at?: string
         }
