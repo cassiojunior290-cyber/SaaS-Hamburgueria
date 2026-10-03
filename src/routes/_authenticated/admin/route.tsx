@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useIsAdmin } from "@/hooks/useAuth";
 import { SiteHeader } from "@/components/SiteHeader";
 
@@ -17,6 +17,7 @@ const links = [
 function AdminLayout() {
   const { user } = Route.useRouteContext();
   const isAdmin = useIsAdmin(user);
+  const pathname = useLocation({ select: (l) => l.pathname });
   return (
     <div className="min-h-screen">
       <SiteHeader />
@@ -40,7 +41,7 @@ function AdminLayout() {
               </Link>
             ))}
           </nav>
-          <div key={typeof window !== "undefined" ? undefined : undefined} className="animate-fade-in">
+          <div key={pathname} className="animate-fade-in">
             <Outlet />
           </div>
         </div>
