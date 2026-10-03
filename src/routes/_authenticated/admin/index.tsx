@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { OrderCard } from "@/components/OrderCard";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BannerLogoManager } from "@/components/BannerLogoManager";
 import { nextStatus, STATUS_FLOW, STATUS_LABEL } from "@/lib/format";
 
 
@@ -20,16 +19,9 @@ function AdminPage() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList>
           <TabsTrigger value="pedidos">Pedidos</TabsTrigger>
-          <TabsTrigger value="configuracoes">Configurações</TabsTrigger>
         </TabsList>
         <TabsContent value="pedidos">
           <AdminOrders />
-        </TabsContent>
-        <TabsContent value="configuracoes">
-          <div className="space-y-4">
-            <BannerLogoManager type="banner" />
-            <BannerLogoManager type="logo" />
-          </div>
         </TabsContent>
       </Tabs>
     </div>
@@ -64,16 +56,7 @@ function AdminOrders() {
     <div>
       <h1 className="mb-4 text-3xl">Pedidos</h1>
       <div className="mb-4 flex flex-wrap gap-2">
-        {[[
-          "ativos",
-          "Em andamento"
-        ], ...STATUS_FLOW.map((s) => [
-          s,
-          STATUS_LABEL[s]
-        ]), [
-          "todos",
-          "Todos"
-        ]].map(([v, l]) => (
+        {[["ativos", "Em andamento"], ...STATUS_FLOW.map((s) => [s, STATUS_LABEL[s]]), ["todos", "Todos"]].map(([v, l]) => (
           <Button key={v} size="sm" variant={filter === v ? "default" : "outline"} onClick={() => setFilter(v!)}>{l}</Button>
         ))}
       </div>
