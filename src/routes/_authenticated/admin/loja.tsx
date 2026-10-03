@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { BannerLogoManager } from "@/components/BannerLogoManager";
 
+
 export const Route = createFileRoute("/_authenticated/admin/loja")({ component: AdminStore });
 
 function AdminStore() {
@@ -36,7 +37,8 @@ function AdminStore() {
   return (
     <div className="max-w-md space-y-4">
       <h1 className="text-3xl">Loja</h1>
-      <BannerLogoManager />
+      <BannerLogoManager type="banner" />
+      <BannerLogoManager type="logo" />
       <form onSubmit={save} className="space-y-4">
         <div><Label htmlFor="sn">Nome da loja</Label><Input id="sn" value={f.store_name} maxLength={60} onChange={(e) => setF({ ...f, store_name: e.target.value })} /></div>
         <div><Label htmlFor="df">Taxa de entrega (R$)</Label><Input id="df" inputMode="decimal" value={f.delivery_fee} onChange={(e) => setF({ ...f, delivery_fee: e.target.value })} /></div>
