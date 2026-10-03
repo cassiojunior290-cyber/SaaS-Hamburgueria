@@ -10,7 +10,6 @@ export const Route = createFileRoute("/_authenticated/admin")({
 const links = [
   { to: "/admin", label: "Pedidos" },
   { to: "/admin/produtos", label: "Produtos" },
-  { to: "/admin/categorias", label: "Categorias" },
   { to: "/admin/loja", label: "Loja" },
 ] as const;
 

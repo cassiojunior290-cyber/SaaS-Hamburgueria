@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { BannerLogoManager } from "@/components/BannerLogoManager";
 
 export const Route = createFileRoute("/_authenticated/admin/loja")({ component: AdminStore });
 
@@ -33,15 +34,18 @@ function AdminStore() {
   }
 
   return (
-    <form onSubmit={save} className="max-w-md space-y-4">
+    <div className="max-w-md space-y-4">
       <h1 className="text-3xl">Loja</h1>
-      <div><Label htmlFor="sn">Nome da loja</Label><Input id="sn" value={f.store_name} maxLength={60} onChange={(e) => setF({ ...f, store_name: e.target.value })} /></div>
-      <div><Label htmlFor="df">Taxa de entrega (R$)</Label><Input id="df" inputMode="decimal" value={f.delivery_fee} onChange={(e) => setF({ ...f, delivery_fee: e.target.value })} /></div>
-      <label className="flex items-center justify-between rounded-xl border border-border bg-card p-4">
-        <span className="font-semibold">{f.is_open ? "Loja aberta" : "Loja fechada"}</span>
-        <Switch checked={f.is_open} onCheckedChange={(v) => setF({ ...f, is_open: v })} />
-      </label>
-      <Button type="submit" size="lg">Salvar</Button>
-    </form>
+      <BannerLogoManager />
+      <form onSubmit={save} className="space-y-4">
+        <div><Label htmlFor="sn">Nome da loja</Label><Input id="sn" value={f.store_name} maxLength={60} onChange={(e) => setF({ ...f, store_name: e.target.value })} /></div>
+        <div><Label htmlFor="df">Taxa de entrega (R$)</Label><Input id="df" inputMode="decimal" value={f.delivery_fee} onChange={(e) => setF({ ...f, delivery_fee: e.target.value })} /></div>
+        <label className="flex items-center justify-between rounded-xl border border-border bg-card p-4">
+          <span className="font-semibold">{f.is_open ? "Loja aberta" : "Loja fechada"}</span>
+          <Switch checked={f.is_open} onCheckedChange={(v) => setF({ ...f, is_open: v })} />
+        </label>
+        <Button type="submit" size="lg">Salvar</Button>
+      </form>
+    </div>
   );
 }
