@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ProductDialog, type MenuProduct } from "@/components/ProductDialog";
 
 interface StoreBranding {
   banner_url: string | null;
@@ -40,6 +41,7 @@ function MenuPage() {
   const [open, setOpen] = useState(false);
   const [activeCat, setActiveCat] = useState<string | null>(null);
   const [branding, setBranding] = useState<StoreBranding | null>(null);
+  const [selected, setSelected] = useState<MenuProduct | null>(null);
 
   const settings = data?.settings;
   const isOpen = settings?.is_open ?? false;
@@ -100,8 +102,14 @@ function MenuPage() {
                 onClick={(e) => {
                   e.preventDefault();
                   setActiveCat(c.id);
-                  document.getElementById(`cat-${c.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
-                  e.currentTarget.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+                  const pill = e.currentTarget;
+                  const bar = pill.parentElement;
+                  if (bar) bar.scrollTo({ left: pill.offsetLeft - bar.clientWidth / 2 + pill.clientWidth / 2, behavior: "smooth" });
+                  const target = document.getElementById(`cat-${c.id}`);
+                  if (target) {
+                    const offset = 130;
+                    window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - offset, behavior: "smooth" });
+                  }
                 }}
                 className={`snap-start whitespace-nowrap rounded-full border px-4 py-1.5 text-sm font-semibold transition-all duration-300 ease-out ${
                   activeCat === c.id ? "-translate-y-0.5 border-primary bg-primary text-primary-foreground shadow-md" : "border-border hover:-translate-y-0.5 hover:border-primary"
@@ -125,26 +133,18 @@ function MenuPage() {
               <h2 className="mb-4 text-lg tracking-tight sm:text-xl">{c.name}</h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {prods.map((p) => (
-                  <article key={p.id} className="group flex overflow-hidden rounded-2xl bg-card [box-shadow:var(--shadow-soft)] transition-all duration-300 ease-out hover:-translate-y-1 hover:[box-shadow:var(--shadow-lift)] sm:flex-col">
+                  <article key={p.id} onClick={() => setSelected(p)} className="group flex cursor-pointer overflow-hidden rounded-2xl bg-card [box-shadow:var(--shadow-soft)] transition-all duration-300 ease-out hover:-translate-y-1 hover:[box-shadow:var(--shadow-lift)] active:scale-[0.99] sm:flex-col">
                     <div className="m-2 aspect-square w-28 shrink-0 overflow-hidden rounded-xl bg-muted sm:m-0 sm:aspect-[4/3] sm:w-full sm:rounded-none">
                       {p.image_url && <img src={p.image_url} alt={p.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" />}
                     </div>
-                    <div className="flex flex-1 flex-col gap-1.5 p-4">
+                    <div className="flex min-w-0 flex-1 flex-col gap-1.5 p-4">
                       <h3 className="font-sans text-base font-bold">{p.name}</h3>
                       {p.description && <p className="line-clamp-2 text-sm text-muted-foreground">{p.description}</p>}
                       <div className="mt-auto flex items-center justify-between pt-2">
                         <span className="text-lg font-extrabold">{brl(p.price)}</span>
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          disabled={!isOpen}
-                          onClick={() => {
-                            cart.add({ id: p.id, name: p.name, price: Number(p.price), image_url: p.image_url });
-                            toast.success(`${p.name} adicionado`);
-                          }}
-                        >
-                          <Plus className="h-4 w-4" /> Adicionar
-                        </Button>
+                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-secondary-foreground transition-transform group-hover:scale-110">
+                          <Plus className="h-4 w-4" />
+                        </span>
                       </div>
                     </div>
                   </article>
@@ -165,6 +165,18 @@ function MenuPage() {
           </Button>
         </div>
       )}
+
+      <ProductDialog
+        product={selected}
+        products={data?.products ?? []}
+        isOpen={isOpen}
+        onSelect={setSelected}
+        onClose={() => setSelected(null)}
+        onCheckout={() => {
+          setSelected(null);
+          setOpen(true);
+        }}
+      />
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent className="flex w-full flex-col overflow-y-auto sm:max-w-md">
