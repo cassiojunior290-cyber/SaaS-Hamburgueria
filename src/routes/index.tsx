@@ -60,43 +60,31 @@ function MenuPage() {
   return (
     <div className="min-h-screen pb-28">
       <SiteHeader storeName={settings?.store_name} />
-      <section className="bg-primary text-primary-foreground">
-        {branding?.banner_url && (
-          <div className="relative">
-            <img
-              src={branding.banner_url}
-              alt="Banner da loja"
-              className="h-44 w-full object-cover sm:h-56"
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />
-          </div>
-        )}
-        <div className={`mx-auto max-w-6xl px-4 pb-8 ${branding?.banner_url ? "-mt-14" : "pt-8"}`}>
-          <div className="flex items-end gap-4">
-            {branding?.logo_url && (
-              <img
-                src={branding.logo_url}
-                alt="Logo da loja"
-                className="relative z-10 h-24 w-24 shrink-0 rounded-full border-4 border-secondary object-cover shadow-xl sm:h-28 sm:w-28"
-              />
+      <section className="mx-auto max-w-6xl px-4 pt-4">
+        <div className="relative overflow-hidden rounded-3xl bg-primary">
+          {branding?.banner_url ? (
+            <img src={branding.banner_url} alt="Banner da loja" className="h-40 w-full object-cover sm:h-64" />
+          ) : (
+            <div className="h-32 w-full sm:h-48" />
+          )}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent" />
+        </div>
+        <div className="relative -mt-10 flex flex-col items-center gap-3 px-2 text-center sm:-mt-12 sm:flex-row sm:items-end sm:gap-5 sm:px-6 sm:text-left">
+          <div className="h-24 w-24 shrink-0 overflow-hidden rounded-full bg-card ring-4 ring-background [box-shadow:var(--shadow-lift)] sm:h-28 sm:w-28">
+            {branding?.logo_url ? (
+              <img src={branding.logo_url} alt="Logo da loja" className="h-full w-full object-cover" />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-secondary font-display text-2xl text-secondary-foreground">CB</div>
             )}
-            <div className="min-w-0 pb-1">
-              <h1 className="truncate text-2xl text-secondary sm:text-3xl">
-                {settings?.store_name ?? "CARTOON BURGUER"}
-              </h1>
-              <div className="mt-2 flex flex-wrap items-center gap-2 text-xs sm:text-sm">
-                <span
-                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-semibold ${
-                    isOpen ? "bg-success text-background" : "bg-destructive text-destructive-foreground"
-                  }`}
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-background" />
-                  {isOpen ? "Aberto agora" : "Fechado"}
-                </span>
-                <span className="rounded-full bg-background/10 px-3 py-1 font-medium text-background">
-                  Entrega {brl(fee)}
-                </span>
-              </div>
+          </div>
+          <div className="min-w-0 pb-1">
+            <h1 className="truncate text-xl tracking-tight sm:text-2xl">{settings?.store_name ?? "CARTOON BURGUER"}</h1>
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-xs sm:justify-start">
+              <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-semibold ${isOpen ? "bg-success/15 text-success" : "bg-destructive/10 text-destructive"}`}>
+                <span className={`h-1.5 w-1.5 rounded-full ${isOpen ? "bg-success" : "bg-destructive"}`} />
+                {isOpen ? "Aberto agora" : "Fechado"}
+              </span>
+              <span className="rounded-full bg-muted px-3 py-1 font-medium text-muted-foreground">Entrega {brl(fee)}</span>
             </div>
           </div>
         </div>
@@ -134,18 +122,18 @@ function MenuPage() {
           if (!prods.length) return null;
           return (
             <section key={c.id} id={`cat-${c.id}`} className="mb-10 scroll-mt-32">
-              <h2 className="mb-4 text-2xl">{c.name}</h2>
+              <h2 className="mb-4 text-lg tracking-tight sm:text-xl">{c.name}</h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {prods.map((p) => (
-                  <article key={p.id} className="group flex overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary hover:shadow-lg sm:flex-col">
-                    <div className="aspect-square w-32 shrink-0 overflow-hidden bg-muted sm:aspect-[4/3] sm:w-full">
+                  <article key={p.id} className="group flex overflow-hidden rounded-2xl bg-card [box-shadow:var(--shadow-soft)] transition-all duration-300 ease-out hover:-translate-y-1 hover:[box-shadow:var(--shadow-lift)] sm:flex-col">
+                    <div className="m-2 aspect-square w-28 shrink-0 overflow-hidden rounded-xl bg-muted sm:m-0 sm:aspect-[4/3] sm:w-full sm:rounded-none">
                       {p.image_url && <img src={p.image_url} alt={p.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" />}
                     </div>
-                    <div className="flex flex-1 flex-col gap-2 p-4">
+                    <div className="flex flex-1 flex-col gap-1.5 p-4">
                       <h3 className="font-sans text-base font-bold">{p.name}</h3>
                       {p.description && <p className="line-clamp-2 text-sm text-muted-foreground">{p.description}</p>}
                       <div className="mt-auto flex items-center justify-between pt-2">
-                        <span className="text-lg font-bold">{brl(p.price)}</span>
+                        <span className="text-lg font-extrabold">{brl(p.price)}</span>
                         <Button
                           size="sm"
                           variant="secondary"

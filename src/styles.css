@@ -65,7 +65,9 @@
   --radius: 0.875rem;
   --font-display: "Archivo Black", system-ui, sans-serif;
   --font-body: "Manrope", system-ui, sans-serif;
-  --background: oklch(0.985 0.008 95);
+  --background: oklch(0.98 0 0);
+  --shadow-soft: 0 1px 2px oklch(0 0 0 / 4%), 0 8px 24px -12px oklch(0 0 0 / 12%);
+  --shadow-lift: 0 2px 4px oklch(0 0 0 / 4%), 0 20px 40px -16px oklch(0 0 0 / 22%);
   --foreground: oklch(0.16 0.005 90);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.16 0.005 90);
