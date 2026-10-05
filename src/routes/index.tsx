@@ -69,7 +69,7 @@ function MenuPage() {
       </section>
 
       {data && data.categories.length > 0 && (
-        <nav className="sticky top-[57px] z-20 border-b border-border bg-background/95 backdrop-blur">
+        <nav className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur">
           <div className="mx-auto flex max-w-6xl snap-x gap-2 overflow-x-auto scroll-smooth px-4 py-3">
             {data.categories.map((c) => (
               <a
@@ -83,7 +83,7 @@ function MenuPage() {
                   if (bar) bar.scrollTo({ left: pill.offsetLeft - bar.clientWidth / 2 + pill.clientWidth / 2, behavior: "smooth" });
                   const target = document.getElementById(`cat-${c.id}`);
                   if (target) {
-                    const offset = 130;
+                    const offset = 64;
                     window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - offset, behavior: "smooth" });
                   }
                 }}
@@ -105,7 +105,7 @@ function MenuPage() {
           const prods = data.products.filter((p) => p.category_id === c.id);
           if (!prods.length) return null;
           return (
-            <section key={c.id} id={`cat-${c.id}`} className="mb-10 scroll-mt-32">
+            <section key={c.id} id={`cat-${c.id}`} className="mb-10 scroll-mt-20">
               <h2 className="mb-4 text-lg tracking-tight sm:text-xl">{c.name}</h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {prods.map((p) => (
@@ -266,9 +266,9 @@ function CartAndCheckout({ fee, isOpen, onDone }: { fee: number; isOpen: boolean
             <div>
               <Label>Pagamento na entrega</Label>
               <RadioGroup value={form.payment} onValueChange={(v) => setForm({ ...form, payment: v })} className="mt-2 grid grid-cols-3 gap-2">
-                {[["dinheiro", "Dinheiro"], ["pix", "Pix"], ["cartao", "Cartão"]].map(([v, l]) => (
-                  <Label key={v!} className="flex cursor-pointer items-center gap-2 rounded-lg border border-border p-3 has-[:checked]:border-primary">
-                    <RadioGroupItem value={v!} /> {l}
+                {["dinheiro", "pix", "cartao"].map((v) => (
+                  <Label key={v} className="flex cursor-pointer items-center gap-2 rounded-lg border border-border p-3 has-[:checked]:border-primary">
+                    <RadioGroupItem value={v} /> {v === "dinheiro" ? "Dinheiro" : v === "pix" ? "Pix" : "Cartão"}
                   </Label>
                 ))}
               </RadioGroup>
