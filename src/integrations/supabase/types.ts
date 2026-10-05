@@ -220,29 +220,47 @@ export type Database = {
       }
       store_settings: {
         Row: {
+          address: string | null
+          address_url: string | null
           banner_url: string | null
+          bio: string | null
           delivery_fee: number
+          delivery_time: string | null
           id: number
           is_open: boolean
           logo_url: string | null
+          minimum_order: number | null
+          pickup_time: string | null
           store_name: string
           updated_at: string
         }
         Insert: {
+          address?: string | null
+          address_url?: string | null
           banner_url?: string | null
+          bio?: string | null
           delivery_fee?: number
+          delivery_time?: string | null
           id?: number
           is_open?: boolean
           logo_url?: string | null
+          minimum_order?: number | null
+          pickup_time?: string | null
           store_name?: string
           updated_at?: string
         }
         Update: {
+          address?: string | null
+          address_url?: string | null
           banner_url?: string | null
+          bio?: string | null
           delivery_fee?: number
+          delivery_time?: string | null
           id?: number
           is_open?: boolean
           logo_url?: string | null
+          minimum_order?: number | null
+          pickup_time?: string | null
           store_name?: string
           updated_at?: string
         }
