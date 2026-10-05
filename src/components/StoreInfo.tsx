@@ -79,4 +79,27 @@ export function StoreInfo() {
           <span className={`font-bold ${s.is_open ? "text-success" : "text-destructive"}`}>{s.is_open ? "Aberto agora" : "Fechado"}</span>
           {dot}
           <span>
-            Entrega {s.delivery_time && <strong>{s.delivery_time}</strong>}{
+            Entrega {s.delivery_time && <strong>{s.delivery_time}</strong>}
+            <span className={fee === 0 ? "font-bold text-success" : "font-bold"}>· {fee === 0 ? "Grátis" : brl(fee)}</span>
+          </span>
+          {s.pickup_time && (
+            <>
+              {dot}
+              <span>
+                Retirada <strong>{s.pickup_time}</strong>
+              </span>
+            </>
+          )}
+          {!!s.minimum_order && (
+            <>
+              {dot}
+              <span>
+                Mín. <strong>{brl(s.minimum_order)}</strong>
+              </span>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
