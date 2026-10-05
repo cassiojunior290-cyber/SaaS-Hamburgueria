@@ -9,13 +9,14 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { BannerLogoManager } from "@/components/BannerLogoManager";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 export const Route = createFileRoute("/_authenticated/admin/loja")({ component: AdminStore });
 
 function AdminStore() {
   const qc = useQueryClient();
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["admin-settings"],
     queryFn: async () => (await supabase.from("store_settings").select("*").eq("id", 1).single()).data,
   });
@@ -70,6 +71,24 @@ function AdminStore() {
     toast.success("Configurações salvas");
     qc.invalidateQueries({ queryKey: ["admin-settings"] });
     qc.invalidateQueries({ queryKey: ["menu"] });
+  }
+
+  if (isLoading) {
+    return (
+      <div className="max-w-md space-y-4">
+        <Skeleton className="h-8 w-24" />
+        <Skeleton className="h-40 w-full" />
+        <Skeleton className="h-40 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+    );
   }
 
   return (

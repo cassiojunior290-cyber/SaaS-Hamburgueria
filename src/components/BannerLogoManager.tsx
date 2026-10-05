@@ -4,7 +4,6 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useSidebar } from "./ui/sidebar";
 
 interface BannerLogoManagerProps {
   type: "banner" | "logo";
@@ -13,7 +12,6 @@ interface BannerLogoManagerProps {
 export function BannerLogoManager({ type }: BannerLogoManagerProps) {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const { toggleSidebar } = useSidebar();
 
   async function handleUpload() {
     if (!file) return;
@@ -69,7 +67,6 @@ export function BannerLogoManager({ type }: BannerLogoManagerProps) {
         </div>
       )}
       <Button onClick={handleUpload} disabled={!file}>Atualizar {type === "banner" ? "Banner" : "Logo"}</Button>
-      <Button onClick={toggleSidebar} className="ml-2">Abrir Menu</Button>
     </div>
   );
 }
