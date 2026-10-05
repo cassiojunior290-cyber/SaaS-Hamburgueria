@@ -20,7 +20,7 @@ export function SiteHeader() {
         type="button"
         aria-label="Abrir menu"
         onClick={() => setOpen(true)}
-        className="fixed top-4 right-4 z-20 rounded-full p-2 bg-white/90 backdrop-blur-md hover:bg-white/95 shadow-md"
+        className="absolute top-4 right-4 z-10 rounded-full p-2 bg-black/40 text-white backdrop-blur-md hover:bg-black/50 shadow-md"
       >
         <Menu className="h-6 w-6" />
       </button>
