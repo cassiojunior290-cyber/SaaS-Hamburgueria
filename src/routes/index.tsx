@@ -169,6 +169,7 @@ function MenuPage() {
       <ProductDialog
         product={selected}
         products={data?.products ?? []}
+        categoryName={data?.categories.find((c) => c.id === selected?.category_id)?.name ?? ""}
         isOpen={isOpen}
         onSelect={setSelected}
         onClose={() => setSelected(null)}
