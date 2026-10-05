@@ -67,6 +67,16 @@ export function PrintableReceipt({ orderId }: { orderId: string }) {
   return (
     <div className="printable-receipt" style={{ maxWidth }}>
       <style>{`
+        .printable-receipt {
+          background: white;
+          font-family: 'Courier New', monospace;
+          font-size: 12px;
+          line-height: 1.2;
+          color: #000;
+          padding: 10px;
+          border: 1px solid #ccc;
+          margin: 0 auto;
+        }
         @media print {
           body * {
             visibility: hidden;
@@ -85,6 +95,8 @@ export function PrintableReceipt({ orderId }: { orderId: string }) {
             line-height: 1.2;
             color: #000;
             padding: 10px;
+            border: none;
+            margin: 0;
           }
         }
       `}</style>
