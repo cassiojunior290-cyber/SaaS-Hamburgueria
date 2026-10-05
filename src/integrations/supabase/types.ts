@@ -230,6 +230,7 @@ export type Database = {
           is_open: boolean
           logo_url: string | null
           minimum_order: number | null
+          paper_width: number
           pickup_time: string | null
           store_name: string
           updated_at: string
@@ -245,6 +246,7 @@ export type Database = {
           is_open?: boolean
           logo_url?: string | null
           minimum_order?: number | null
+          paper_width?: number
           pickup_time?: string | null
           store_name?: string
           updated_at?: string
@@ -260,6 +262,7 @@ export type Database = {
           is_open?: boolean
           logo_url?: string | null
           minimum_order?: number | null
+          paper_width?: number
           pickup_time?: string | null
           store_name?: string
           updated_at?: string
