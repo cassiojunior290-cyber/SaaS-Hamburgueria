@@ -1,5 +1,10 @@
 import type { ReactNode } from "react";
 import { brl, PAYMENT_LABEL, STATUS_FLOW, STATUS_LABEL } from "@/lib/format";
+import { Button } from "@/components/ui/button";
+import { PrintableReceipt } from "@/components/PrintableReceipt";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+
 
 type Order = {
   id: string;
@@ -17,6 +22,13 @@ type Order = {
 
 export function OrderCard({ order, showCustomer, actions }: { order: Order; showCustomer?: boolean; actions?: ReactNode }) {
   const idx = STATUS_FLOW.indexOf(order.status as (typeof STATUS_FLOW)[number]);
+  const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
+
+  const handlePrint = () => {
+    window.print();
+    setIsPrintDialogOpen(false);
+  };
+
   return (
     <article className="rounded-2xl border border-border bg-card p-4 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -52,7 +64,49 @@ export function OrderCard({ order, showCustomer, actions }: { order: Order; show
         <span>Pagamento: {PAYMENT_LABEL[order.payment_method]} · Entrega {brl(order.delivery_fee)}</span>
         <span className="text-base font-bold">{brl(order.total)}</span>
       </div>
-      {actions && <div className="mt-3">{actions}</div>}
+      <div className="mt-3 flex justify-between">
+        {actions && <div>{actions}</div>}
+        <Dialog open={isPrintDialogOpen} onOpenChange={setIsPrintDialogOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm">
+              <PrinterIcon className="mr-2 h-4 w-4" />
+              Imprimir Comanda
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle>Pré-visualização da Comanda</DialogTitle>
+            </DialogHeader>
+            <div className="mt-4">
+              <PrintableReceipt orderId={order.id} />
+              <Button onClick={handlePrint} className="mt-4">
+                Imprimir
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
     </article>
+  );
+}
+
+function PrinterIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="6 9 6 2 18 2 18 9" />
+      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+      <rect width="12" height="8" x="6" y="14" rx="2" />
+    </svg>
   );
 }

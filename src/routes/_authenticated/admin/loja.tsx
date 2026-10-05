@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 
 export const Route = createFileRoute("/_authenticated/admin/loja")({ component: AdminStore });
@@ -33,6 +34,7 @@ function AdminStore() {
     pickup_time: "",
     minimum_order: "0",
     address_url: "",
+    paper_width: 58,
   });
   useEffect(() => {
     if (data) setF({
@@ -45,6 +47,7 @@ function AdminStore() {
       pickup_time: data.pickup_time || "",
       minimum_order: String(data.minimum_order || "0"),
       address_url: data.address_url || "",
+      paper_width: data.paper_width || 58,
     });
   }, [data]);
 
@@ -66,6 +69,7 @@ function AdminStore() {
       pickup_time: f.pickup_time.trim(),
       minimum_order: minOrder,
       address_url: f.address_url.trim(),
+      paper_width: f.paper_width,
     }).eq("id", 1);
     if (error) {
       toast.error("Erro ao salvar.");
@@ -204,6 +208,18 @@ function AdminStore() {
               <div>
                 <Label htmlFor="minimum_order">Pedido mínimo (R$)</Label>
                 <Input id="minimum_order" inputMode="decimal" value={f.minimum_order} onChange={(e) => setF({ ...f, minimum_order: e.target.value })} />
+              </div>
+              <div>
+                <Label htmlFor="paper_width">Largura da Bobina</Label>
+                <Select value={String(f.paper_width)} onValueChange={(value) => setF({ ...f, paper_width: Number(value) })}>
+                  <SelectTrigger id="paper_width">
+                    <SelectValue placeholder="Selecione a largura" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="58">58mm (Padrão para maquininha/portátil)</SelectItem>
+                    <SelectItem value="80">80mm (Impressora de mesa como Elgin, Epson, Bematech)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <Button type="submit" size="lg" className="mt-4">Salvar Alterações</Button>
