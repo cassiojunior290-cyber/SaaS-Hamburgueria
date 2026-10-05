@@ -63,8 +63,8 @@
 
 :root {
   --radius: 0.875rem;
-  --font-display: "Archivo Black", system-ui, sans-serif;
-  --font-body: "Manrope", system-ui, sans-serif;
+  --font-display: "Cooper Black", "Archivo Black", system-ui, sans-serif;
+  --font-body: "Shrikhand", "Manrope", system-ui, sans-serif;
   --background: oklch(0.98 0 0);
   --shadow-soft: 0 1px 2px oklch(0 0 0 / 4%), 0 8px 24px -12px oklch(0 0 0 / 12%);
   --shadow-lift: 0 2px 4px oklch(0 0 0 / 4%), 0 20px 40px -16px oklch(0 0 0 / 22%);
@@ -145,5 +145,15 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-body {
+    font-family: var(--font-body);
   }
 }

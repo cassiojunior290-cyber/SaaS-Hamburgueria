@@ -147,7 +147,7 @@ export function ProductDialog({
             </div>
 
             <div className="space-y-2 bg-card p-5">
-              <DialogTitle className="font-sans text-xl font-extrabold text-foreground">{product.name}</DialogTitle>
+              <DialogTitle className="font-display text-xl font-extrabold text-foreground">{product.name}</DialogTitle>
               {product.description && <DialogDescription className="text-sm text-muted-foreground">{product.description}</DialogDescription>}
               <p className="pt-1 text-2xl font-extrabold text-foreground">{brl(product.price)}</p>
             </div>

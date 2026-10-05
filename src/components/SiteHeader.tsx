@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth, useIsAdmin } from "@/hooks/useAuth";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
+
 export function SiteHeader({ storeName = "CARTOON BURGUER" }: { storeName?: string | undefined }) {
   const { user } = useAuth();
   const isAdmin = useIsAdmin(user);
@@ -30,22 +31,22 @@ export function SiteHeader({ storeName = "CARTOON BURGUER" }: { storeName?: stri
             <SheetTitle className="text-left font-display">{storeName}</SheetTitle>
           </SheetHeader>
           <nav className="mt-6 flex flex-col divide-y divide-border" onClick={() => setOpen(false)}>
-            <Link to="/" className={item} activeOptions={{ exact: true }} activeProps={{ className: "text-foreground font-bold" }}>
+            <Link to="/" className={`${item} font-body`} activeOptions={{ exact: true }} activeProps={{ className: "text-foreground font-bold" }}>
               <Store className="h-5 w-5" /> Cardápio
             </Link>
             {user ? (
               <>
-                <Link to="/meus-pedidos" className={item} activeProps={{ className: "text-foreground font-bold" }}>
+                <Link to="/meus-pedidos" className={`${item} font-body`} activeProps={{ className: "text-foreground font-bold" }}>
                   <Receipt className="h-5 w-5" /> Meus pedidos
                 </Link>
                 {isAdmin && (
-                  <Link to="/admin" className={item} activeProps={{ className: "text-foreground font-bold" }}>
+                  <Link to="/admin" className={`${item} font-body`} activeProps={{ className: "text-foreground font-bold" }}>
                     <LayoutDashboard className="h-5 w-5" /> Painel Admin
                   </Link>
                 )}
                 <button
                   type="button"
-                  className={`${item} text-destructive hover:text-destructive`}
+                  className={`${item} font-body text-destructive hover:text-destructive`}
                   onClick={async () => {
                     await supabase.auth.signOut();
                     navigate({ to: "/" });
@@ -55,7 +56,7 @@ export function SiteHeader({ storeName = "CARTOON BURGUER" }: { storeName?: stri
                 </button>
               </>
             ) : (
-              <Link to="/auth" className={item}>
+              <Link to="/auth" className={`${item} font-body`}>
                 <LogIn className="h-5 w-5" /> Entrar
               </Link>
             )}

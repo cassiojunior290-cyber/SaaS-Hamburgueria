@@ -56,7 +56,7 @@ export function BannerLogoManager({ type }: BannerLogoManagerProps) {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl">{type === "banner" ? "Banner" : "Logo"}</h2>
+      <h2 className="text-xl font-display">{type === "banner" ? "Banner" : "Logo"}</h2>
       <div className="space-y-2">
         <Label htmlFor={`${type}-upload`}>Selecione uma imagem</Label>
         <Input id={`${type}-upload`} type="file" accept="image/*" onChange={handleFileChange} />

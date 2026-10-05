@@ -21,7 +21,7 @@ export function OrderCard({ order, showCustomer, actions }: { order: Order; show
     <article className="rounded-2xl border border-border bg-card p-4 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <p className="font-bold">Pedido #{order.id.slice(0, 6).toUpperCase()}</p>
+          <p className="font-display font-bold">Pedido #{order.id.slice(0, 6).toUpperCase()}</p>
           <p className="text-xs text-muted-foreground">{new Date(order.created_at).toLocaleString("pt-BR")}</p>
         </div>
         <span className="rounded-full bg-secondary px-3 py-1 text-xs font-bold text-secondary-foreground">
