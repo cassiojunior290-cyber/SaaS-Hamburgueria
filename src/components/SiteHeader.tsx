@@ -15,12 +15,15 @@ export function SiteHeader() {
   const item = "flex items-center gap-3 px-2 py-3 text-base font-medium text-foreground/80 transition-colors hover:text-foreground";
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur">
-      <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-3">
-        <button type="button" aria-label="Abrir menu" onClick={() => setOpen(true)} className="rounded-full p-2 hover:bg-muted">
-          <Menu className="h-6 w-6" />
-        </button>
-      </div>
+    <div className="relative">
+      <button
+        type="button"
+        aria-label="Abrir menu"
+        onClick={() => setOpen(true)}
+        className="fixed top-4 right-4 z-20 rounded-full p-2 bg-black/40 backdrop-blur-md hover:bg-muted shadow-md"
+      >
+        <Menu className="h-6 w-6" />
+      </button>
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="right" className="w-72">
@@ -60,6 +63,6 @@ export function SiteHeader() {
           </nav>
         </SheetContent>
       </Sheet>
-    </header>
+    </div>
   );
 }
