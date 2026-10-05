@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MapPin, Menu } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { brl } from "@/lib/format";
 
@@ -19,7 +19,6 @@ interface StoreInfoData {
 
 export function StoreInfo() {
   const [s, setS] = useState<StoreInfoData | null>(null);
-  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     supabase
@@ -41,14 +40,6 @@ export function StoreInfo() {
     <div className="relative">
       <div className="relative h-52 w-full overflow-hidden bg-muted sm:h-72 sm:rounded-t-3xl">
         {s.banner_url && <img src={s.banner_url} alt="Banner da loja" className="h-full w-full object-cover" />}
-        <button
-          type="button"
-          aria-label="Abrir menu"
-          onClick={() => setOpen(true)}
-          className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 rounded-full p-2 bg-black/50 text-white backdrop-blur-md hover:bg-black/70 shadow-lg border border-white/20"
-        >
-          <Menu className="h-6 w-6" />
-        </button>
       </div>
 
       <div className="relative -mt-10 rounded-t-[32px] bg-card px-5 pb-6 pt-16 text-center [box-shadow:var(--shadow-soft)] sm:rounded-b-3xl">
