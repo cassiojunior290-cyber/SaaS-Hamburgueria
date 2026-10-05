@@ -12,7 +12,7 @@ export type MenuProduct = {
   description: string | null;
   price: number | string;
   image_url: string | null;
-  category_id: string;
+  category_id: string | null;
 };
 
 export function ProductDialog({
