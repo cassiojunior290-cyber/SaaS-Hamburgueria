@@ -9,6 +9,7 @@ import { useCart } from "@/lib/cart";
 import { useAuth } from "@/hooks/useAuth";
 import { brl } from "@/lib/format";
 import { SiteHeader } from "@/components/SiteHeader";
+import { StoreInfo } from "@/components/StoreInfo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,6 +22,7 @@ interface StoreBranding {
   banner_url: string | null;
   logo_url: string | null;
 }
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -61,35 +63,9 @@ function MenuPage() {
 
   return (
     <div className="min-h-screen pb-28">
-      <SiteHeader storeName={settings?.store_name} />
+      <SiteHeader />
       <section className="mx-auto max-w-6xl px-4 pt-4">
-        <div className="relative overflow-hidden rounded-3xl bg-primary">
-          {branding?.banner_url ? (
-            <img src={branding.banner_url} alt="Banner da loja" className="h-40 w-full object-cover sm:h-64" />
-          ) : (
-            <div className="h-32 w-full sm:h-48" />
-          )}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent" />
-        </div>
-        <div className="relative -mt-10 flex flex-col items-center gap-3 px-2 text-center sm:-mt-12 sm:flex-row sm:items-end sm:gap-5 sm:px-6 sm:text-left">
-          <div className="h-24 w-24 shrink-0 overflow-hidden rounded-full bg-card ring-4 ring-background [box-shadow:var(--shadow-lift)] sm:h-28 sm:w-28">
-            {branding?.logo_url ? (
-              <img src={branding.logo_url} alt="Logo da loja" className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center bg-secondary font-display text-2xl text-secondary-foreground">CB</div>
-            )}
-          </div>
-          <div className="min-w-0 pb-1">
-            <h1 className="truncate text-xl tracking-tight sm:text-2xl">{settings?.store_name ?? "CARTOON BURGUER"}</h1>
-            <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-xs sm:justify-start">
-              <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-semibold ${isOpen ? "bg-success/15 text-success" : "bg-destructive/10 text-destructive"}`}>
-                <span className={`h-1.5 w-1.5 rounded-full ${isOpen ? "bg-success" : "bg-destructive"}`} />
-                {isOpen ? "Aberto agora" : "Fechado"}
-              </span>
-              <span className="rounded-full bg-muted px-3 py-1 font-medium text-muted-foreground">Entrega {brl(fee)}</span>
-            </div>
-          </div>
-        </div>
+        <StoreInfo />
       </section>
 
       {data && data.categories.length > 0 && (
@@ -290,16 +266,7 @@ function CartAndCheckout({ fee, isOpen, onDone }: { fee: number; isOpen: boolean
             <div>
               <Label>Pagamento na entrega</Label>
               <RadioGroup value={form.payment} onValueChange={(v) => setForm({ ...form, payment: v })} className="mt-2 grid grid-cols-3 gap-2">
-                {[[
-                  "dinheiro",
-                  "Dinheiro"
-                ], [
-                  "pix",
-                  "Pix"
-                ], [
-                  "cartao",
-                  "Cartão"
-                ]].map(([v, l]) => (
+                {[["dinheiro", "Dinheiro"], ["pix", "Pix"], ["cartao", "Cartão"]].map(([v, l]) => (
                   <Label key={v!} className="flex cursor-pointer items-center gap-2 rounded-lg border border-border p-3 has-[:checked]:border-primary">
                     <RadioGroupItem value={v!} /> {l}
                   </Label>

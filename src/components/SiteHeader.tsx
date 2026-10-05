@@ -6,7 +6,7 @@ import { useAuth, useIsAdmin } from "@/hooks/useAuth";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 
-export function SiteHeader({ storeName = "CARTOON BURGUER" }: { storeName?: string | undefined }) {
+export function SiteHeader() {
   const { user } = useAuth();
   const isAdmin = useIsAdmin(user);
   const navigate = useNavigate();
@@ -17,9 +17,6 @@ export function SiteHeader({ storeName = "CARTOON BURGUER" }: { storeName?: stri
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur">
       <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-3">
-        <Link to="/" className="truncate font-display text-base tracking-tight">
-          {storeName}
-        </Link>
         <button type="button" aria-label="Abrir menu" onClick={() => setOpen(true)} className="rounded-full p-2 hover:bg-muted">
           <Menu className="h-6 w-6" />
         </button>
@@ -28,7 +25,7 @@ export function SiteHeader({ storeName = "CARTOON BURGUER" }: { storeName?: stri
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="right" className="w-72">
           <SheetHeader>
-            <SheetTitle className="text-left font-display">{storeName}</SheetTitle>
+            <SheetTitle className="text-left font-display">Menu</SheetTitle>
           </SheetHeader>
           <nav className="mt-6 flex flex-col divide-y divide-border" onClick={() => setOpen(false)}>
             <Link to="/" className={`${item} font-body`} activeOptions={{ exact: true }} activeProps={{ className: "text-foreground font-bold" }}>
