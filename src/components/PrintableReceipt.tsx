@@ -76,6 +76,7 @@ export function PrintableReceipt({ orderId }: { orderId: string }) {
           padding: 10px;
           border: 1px solid #ccc;
           margin: 0 auto;
+          width: ${maxWidth};
         }
         @media print {
           body * {
@@ -88,7 +89,7 @@ export function PrintableReceipt({ orderId }: { orderId: string }) {
             position: absolute;
             left: 0;
             top: 0;
-            width: 100%;
+            width: ${maxWidth};
             background: white;
             font-family: 'Courier New', monospace;
             font-size: 12px;
