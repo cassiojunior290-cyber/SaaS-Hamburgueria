@@ -64,7 +64,7 @@ function MenuPage() {
   return (
     <div className="min-h-screen pb-28">
       <SiteHeader />
-      <section className="mx-auto max-w-6xl px-4 pt-4">
+      <section className="mx-auto max-w-6xl sm:px-4 sm:pt-4">
         <StoreInfo />
       </section>
 
