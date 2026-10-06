@@ -78,7 +78,7 @@ export function OrderCard({ order, showCustomer, actions }: { order: Order; show
               <DialogTitle>Pré-visualização da Comanda</DialogTitle>
             </DialogHeader>
             <div className="mt-4">
-              <PrintableReceipt orderId={order.id} />
+              <PrintableReceipt order={order} />
               <Button onClick={handlePrint} className="mt-4">
                 Imprimir
               </Button>
