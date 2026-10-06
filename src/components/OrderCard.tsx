@@ -73,16 +73,17 @@ export function OrderCard({ order, showCustomer, actions }: { order: Order; show
               Imprimir Comanda
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-3xl">
+          <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>Pré-visualização da Comanda</DialogTitle>
             </DialogHeader>
-            <div className="mt-4">
+            <div className="mt-2 max-h-[60vh] overflow-y-auto rounded-lg bg-muted/40 p-3">
               <PrintableReceipt order={order} />
-              <Button onClick={handlePrint} className="mt-4">
-                Imprimir
-              </Button>
             </div>
+            <Button onClick={handlePrint} className="mt-4 w-full" size="lg">
+              <PrinterIcon className="mr-2 h-4 w-4" />
+              Imprimir Comanda
+            </Button>
           </DialogContent>
         </Dialog>
       </div>
