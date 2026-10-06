@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as PreviewComandaRouteImport } from './routes/preview-comanda'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedMeusPedidosRouteImport } from './routes/_authenticated/meus-pedidos'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
@@ -31,6 +32,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PreviewComandaRoute = PreviewComandaRouteImport.update({
+  id: '/preview-comanda',
+  path: '/preview-comanda',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
@@ -70,6 +76,7 @@ const AuthenticatedAdminProdutosRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/preview-comanda': typeof PreviewComandaRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/meus-pedidos': typeof AuthenticatedMeusPedidosRoute
   '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/preview-comanda': typeof PreviewComandaRoute
   '/meus-pedidos': typeof AuthenticatedMeusPedidosRoute
   '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
   '/admin/loja': typeof AuthenticatedAdminLojaRoute
@@ -91,6 +99,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/preview-comanda': typeof PreviewComandaRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/meus-pedidos': typeof AuthenticatedMeusPedidosRoute
   '/_authenticated/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
@@ -103,6 +112,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/preview-comanda'
     | '/admin'
     | '/meus-pedidos'
     | '/admin/categorias'
@@ -113,6 +123,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/preview-comanda'
     | '/meus-pedidos'
     | '/admin/categorias'
     | '/admin/loja'
@@ -123,6 +134,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/preview-comanda'
     | '/_authenticated/admin'
     | '/_authenticated/meus-pedidos'
     | '/_authenticated/admin/categorias'
@@ -135,6 +147,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  PreviewComandaRoute: typeof PreviewComandaRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -158,6 +171,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preview-comanda': {
+      id: '/preview-comanda'
+      path: '/preview-comanda'
+      fullPath: '/preview-comanda'
+      preLoaderRoute: typeof PreviewComandaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -242,6 +262,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  PreviewComandaRoute: PreviewComandaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
