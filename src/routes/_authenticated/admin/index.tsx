@@ -56,7 +56,13 @@ function AdminOrders() {
     <div>
       <h1 className="mb-4 text-3xl">Pedidos</h1>
       <div className="mb-4 flex flex-wrap gap-2">
-        {[["ativos", "Em andamento"], ...STATUS_FLOW.map((s) => [s, STATUS_LABEL[s]]), ["todos", "Todos"]].map(([v, l]) => (
+        {[[
+          "ativos", "Em andamento"
+        ], ...STATUS_FLOW.map((s) => [
+          s, STATUS_LABEL[s]
+        ]), [
+          "todos", "Todos"
+        ]].map(([v, l]) => (
           <Button key={v} size="sm" variant={filter === v ? "default" : "outline"} onClick={() => setFilter(v!)}>{l}</Button>
         ))}
       </div>
@@ -70,6 +76,7 @@ function AdminOrders() {
               key={o.id}
               order={o}
               showCustomer
+              allowPrint={true}
               actions={n && <Button variant="secondary" className="w-full" onClick={() => advance(o.id, o.status)}>Avançar para: {STATUS_LABEL[n]}</Button>}
             />
           );

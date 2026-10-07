@@ -23,7 +23,7 @@ type Order = {
   order_items: { id: string; product_name: string; unit_price: number; quantity: number }[];
 };
 
-export function OrderCard({ order, showCustomer, actions }: { order: Order; showCustomer?: boolean; actions?: ReactNode }) {
+export function OrderCard({ order, showCustomer, actions, allowPrint = false }: { order: Order; showCustomer?: boolean; actions?: ReactNode; allowPrint?: boolean }) {
   const idx = STATUS_FLOW.indexOf(order.status as (typeof STATUS_FLOW)[number]);
   const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
 
@@ -69,26 +69,28 @@ export function OrderCard({ order, showCustomer, actions }: { order: Order; show
       </div>
       <div className="mt-3 flex justify-between">
         {actions && <div>{actions}</div>}
-        <Dialog open={isPrintDialogOpen} onOpenChange={setIsPrintDialogOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="sm">
-              <PrinterIcon className="mr-2 h-4 w-4" />
-              Imprimir Comanda
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Pré-visualização da Comanda</DialogTitle>
-            </DialogHeader>
-            <div className="mt-2 max-h-[60vh] overflow-y-auto rounded-lg bg-muted/40 p-3">
-              <PrintableReceipt order={order} />
-            </div>
-            <Button onClick={handlePrint} className="mt-4 w-full" size="lg">
-              <PrinterIcon className="mr-2 h-4 w-4" />
-              Imprimir Comanda
-            </Button>
-          </DialogContent>
-        </Dialog>
+        {allowPrint && (
+          <Dialog open={isPrintDialogOpen} onOpenChange={setIsPrintDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                <PrinterIcon className="mr-2 h-4 w-4" />
+                Imprimir Comanda
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Pré-visualização da Comanda</DialogTitle>
+              </DialogHeader>
+              <div className="mt-2 max-h-[60vh] overflow-y-auto rounded-lg bg-muted/40 p-3">
+                <PrintableReceipt order={order} />
+              </div>
+              <Button onClick={handlePrint} className="mt-4 w-full" size="lg">
+                <PrinterIcon className="mr-2 h-4 w-4" />
+                Imprimir Comanda
+              </Button>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     </article>
   );
