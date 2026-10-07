@@ -1,13 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { Minus, Plus, ShoppingBag, Trash2, Menu, Truck } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Trash2, Menu } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { menuQuery } from "@/lib/menu";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/hooks/useAuth";
-import { brl, STATUS_LABEL } from "@/lib/format";
+import { brl } from "@/lib/format";
 import { StoreInfo } from "@/components/StoreInfo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -158,20 +158,26 @@ function MenuPage() {
         }}
       />
 
-      <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-        <SheetContent className="flex w-full flex-col overflow-y-auto sm:max-w-md">
+      <Sheet open={menuOpen} onOpenChange={setMenuOpen} side="right">
+        <SheetContent className="w-72 sm:max-w-sm">
           <SheetHeader>
             <SheetTitle className="font-display">Menu</SheetTitle>
           </SheetHeader>
           <div className="flex flex-1 flex-col gap-4 px-4 pb-6">
+            <Link to="/" className="text-primary hover:underline">Cardápio</Link>
             <Link to="/meus-pedidos" className="text-primary hover:underline">Meus pedidos</Link>
-            <OrderStatus />
+            {user?.is_admin && <Link to="/admin" className="text-primary hover:underline">Painel Admin</Link>}
+            {!user ? (
+              <Link to="/auth" className="text-primary hover:underline">Entrar</Link>
+            ) : (
+              <Button variant="ghost" className="justify-start text-primary hover:underline" onClick={logout}>Sair</Button>
+            )}
           </div>
         </SheetContent>
       </Sheet>
 
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent className="flex w-full flex-col overflow-y-auto sm:max-w-md">
+      <Sheet open={open} onOpenChange={setOpen} side="right">
+        <SheetContent className="w-72 sm:max-w-sm">
           <SheetHeader>
             <SheetTitle className="font-display">Seu pedido</SheetTitle>
           </SheetHeader>
@@ -179,106 +185,18 @@ function MenuPage() {
         </SheetContent>
       </Sheet>
 
-      <BottomBar />
-    </div>
-  );
-}
-
-function OrderStatus() {
-  const { user } = useAuth();
-  const { data: activeOrder } = useQuery({
-    queryKey: ["active-order"],
-    queryFn: async () => {
-      if (!user) return null;
-      const { data, error } = await supabase
-        .from("orders")
-        .select("*, order_items(*)")
-        .eq("user_id", user.id)
-        .neq("status", "entregue")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
-      if (error) return null;
-      return data;
-    },
-    enabled: !!user,
-  });
-
-  if (!activeOrder) return null;
-
-  const statusSteps = ["recebido", "preparando", "pronto", "saiu"];
-  const currentStep = statusSteps.indexOf(activeOrder.status);
-
-  return (
-    <div className="mt-4 rounded-xl bg-muted/60 p-3 border border-border/50">
-      <div className="flex justify-between mb-2">
-        <span className="font-semibold">Pedido #{activeOrder.id.substring(0, 4)}</span>
-        <span className="font-semibold">{brl(activeOrder.total)}</span>
-      </div>
-      <div className="flex justify-between mb-2">
-        {statusSteps.map((step, index) => (
-          <div key={step} className={`flex-1 h-2 rounded-full mx-1 ${index <= currentStep ? "bg-primary" : "bg-muted"}`}></div>
-        ))}
-      </div>
-      <div className="flex justify-between text-xs mb-2">
-        <span>Recebido</span>
-        <span>Em preparo</span>
-        <span>Saiu para entrega</span>
-        <span>Entregue</span>
-      </div>
-      <Link to="/meus-pedidos" className="text-sm text-primary hover:underline">Ver detalhes do pedido</Link>
-    </div>
-  );
-}
-
-function BottomBar() {
-  const cart = useCart();
-  const { user } = useAuth();
-  const { data: activeOrder } = useQuery({
-    queryKey: ["active-order"],
-    queryFn: async () => {
-      if (!user) return null;
-      const { data, error } = await supabase
-        .from("orders")
-        .select("*, order_items(*)")
-        .eq("user_id", user.id)
-        .neq("status", "entregue")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
-      if (error) return null;
-      return data;
-    },
-    enabled: !!user,
-  });
-
-  if (cart.count > 0) {
-    return (
-      <div className="fixed inset-x-0 bottom-0 z-30 p-4">
-        <Button className="mx-auto flex h-14 w-full max-w-md justify-between rounded-2xl text-base shadow-lg bg-yellow-500 hover:bg-yellow-600" onClick={() => setOpen(true)}>
-          <span className="flex items-center gap-2">
-            <ShoppingBag className="h-5 w-5" /> Ver carrinho ({cart.count})
-          </span>
-          <span>{brl(cart.subtotal)}</span>
-        </Button>
-      </div>
-    );
-  } else if (activeOrder) {
-    return (
-      <div className="fixed inset-x-0 bottom-0 z-30 p-4">
-        <Button asChild className="mx-auto flex h-14 w-full max-w-md justify-between rounded-2xl text-base shadow-lg bg-muted hover:bg-muted/90">
-          <Link to="/meus-pedidos">
+      {cart.count > 0 && (
+        <div className="fixed inset-x-0 bottom-0 z-30 p-4">
+          <Button className="mx-auto flex h-14 w-full max-w-md justify-between rounded-2xl text-base shadow-lg bg-yellow-500 hover:bg-yellow-600" onClick={() => setOpen(true)}>
             <span className="flex items-center gap-2">
-              <Truck className="h-5 w-5" /> Acompanhar pedido (#{activeOrder.id.substring(0, 4)})
+              <ShoppingBag className="h-5 w-5" /> Ver carrinho ({cart.count})
             </span>
-            <span>{STATUS_LABEL[activeOrder.status]}</span>
-          </Link>
-        </Button>
-      </div>
-    );
-  }
-
-  return null;
+            <span>{brl(cart.subtotal)}</span>
+          </Button>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function CartAndCheckout({ fee, isOpen, onDone }: { fee: number; isOpen: boolean; onDone: () => void }) {
