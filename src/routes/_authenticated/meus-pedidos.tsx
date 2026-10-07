@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { OrderCard } from "@/components/OrderCard";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarTrigger, SidebarProvider } from "@/components/ui/sidebar";
 
 import { cn } from "@/lib/utils";
 
@@ -40,9 +40,11 @@ function MyOrders() {
   return (
     <div className="min-h-screen">
       <SiteHeader />
-      <div className="absolute top-4 right-4">
-        <SidebarTrigger />
-      </div>
+      <SidebarProvider>
+        <div className="absolute top-4 right-4">
+          <SidebarTrigger />
+        </div>
+      </SidebarProvider>
       <main className="mx-auto max-w-3xl px-4 py-8">
         <h1 className="mb-6 text-3xl">Meus pedidos</h1>
         {isLoading && <p className="text-muted-foreground">Carregando...</p>}
