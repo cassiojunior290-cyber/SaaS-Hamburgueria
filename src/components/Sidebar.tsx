@@ -5,10 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth, useIsAdmin } from "@/hooks/useAuth";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Sidebar } from "@/components/Sidebar";
 
 
-export function SiteHeader() {
+export function Sidebar() {
   const { user } = useAuth();
   const isAdmin = useIsAdmin(user);
   const navigate = useNavigate();
@@ -17,13 +16,10 @@ export function SiteHeader() {
   const item = "flex items-center gap-3 px-2 py-3 text-base font-medium text-foreground/80 transition-colors hover:text-foreground";
 
   return (
-    <div className="relative">
-      <Sidebar />
-      <div className="flex items-center justify-between p-4">
-        <Button variant="ghost" size="icon" onClick={() => setOpen(true)} aria-label="Abrir menu">
-          <Menu className="h-6 w-6" />
-        </Button>
-      </div>
+    <div className="fixed top-4 right-4 z-50">
+      <Button variant="ghost" size="icon" onClick={() => setOpen(true)} aria-label="Abrir menu">
+        <Menu className="h-6 w-6" />
+      </Button>
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="right" className="w-72">
