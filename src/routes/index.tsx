@@ -9,6 +9,7 @@ import { useCart } from "@/lib/cart";
 import { useAuth, useIsAdmin } from "@/hooks/useAuth";
 import { brl } from "@/lib/format";
 import { StoreInfo } from "@/components/StoreInfo";
+import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,7 +17,6 @@ import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ProductDialog, type MenuProduct } from "@/components/ProductDialog";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 
 interface StoreBranding {
   banner_url: string | null;
@@ -72,12 +72,10 @@ function MenuPage() {
 
   return (
     <div className="min-h-screen pb-28">
+      <SiteHeader />
       {branding?.banner_url && (
         <div className="relative">
           <img src={branding.banner_url} alt="Banner" className="w-full h-64 object-cover rounded-b-2xl" />
-          <div className="absolute top-4 right-4">
-            <SidebarTrigger />
-          </div>
         </div>
       )}
 
@@ -298,11 +296,7 @@ function CartAndCheckout({ fee, isOpen, onDone }: { fee: number; isOpen: boolean
             <div>
               <Label>Pagamento na entrega</Label>
               <RadioGroup value={form.payment} onValueChange={(v) => setForm({ ...form, payment: v })} className="mt-2 grid grid-cols-3 gap-2">
-                {[
-                  "dinheiro",
-                  "pix",
-                  "cartao"
-                ].map((v) => (
+                {["dinheiro", "pix", "cartao"].map((v) => (
                   <Label key={v} className="flex cursor-pointer items-center gap-2 rounded-lg border border-border p-3 has-[:checked]:border-primary">
                     <RadioGroupItem value={v} /> {v === "dinheiro" ? "Dinheiro" : v === "pix" ? "Pix" : "Cartão"}
                   </Label>

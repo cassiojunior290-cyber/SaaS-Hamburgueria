@@ -1,9 +1,6 @@
 import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useIsAdmin } from "@/hooks/useAuth";
 import { SiteHeader } from "@/components/SiteHeader";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-
-import { cn } from "@/lib/utils";
 
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -24,9 +21,6 @@ function AdminLayout() {
   return (
     <div className="min-h-screen">
       <SiteHeader />
-      <div className="absolute top-4 right-4">
-        <SidebarTrigger />
-      </div>
       {isAdmin === null ? (
         <p className="p-8 text-muted-foreground">Verificando acesso...</p>
       ) : !isAdmin ? (

@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth, useIsAdmin } from "@/hooks/useAuth";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Sidebar } from "@/components/Sidebar";
 
 
 export function SiteHeader() {
@@ -18,7 +17,6 @@ export function SiteHeader() {
 
   return (
     <div className="relative">
-      <Sidebar />
       <div className="flex items-center justify-between p-4">
         <Button variant="ghost" size="icon" onClick={() => setOpen(true)} aria-label="Abrir menu">
           <Menu className="h-6 w-6" />
