@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { STATUS_LABEL } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ShoppingBag } from "lucide-react";
 import { useState } from "react";
 
 
@@ -21,7 +22,7 @@ type Order = {
   order_items: { id: string; product_name: string; unit_price: number; quantity: number }[];
 };
 
-export function ActiveOrderBar() {
+export function ActiveOrderBar({ hasCartBar }: { hasCartBar?: boolean }) {
   const { user } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -55,14 +56,12 @@ export function ActiveOrderBar() {
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <div className="fixed inset-x-0 bottom-20 z-30 mx-auto w-full max-w-md px-4">
+      <div className={`fixed right-6 z-40 ${hasCartBar ? "bottom-24" : "bottom-6"}`}>
         <DialogTrigger asChild>
-          <Button className={`flex w-full items-center justify-between rounded-full px-6 py-3 shadow-lg ${statusColor}`}>
-            <span className="flex items-center gap-2">
-              <span className="h-3 w-3 rounded-full bg-white"></span>
-              <span className="text-white">Pedido #{activeOrder.id.slice(0, 6).toUpperCase()} — {STATUS_LABEL[activeOrder.status]}</span>
-            </span>
-            <span className="text-white">Acompanhar</span>
+          <Button className={`relative h-14 w-14 rounded-full bg-card shadow-lg transition-transform active:scale-95 hover:scale-105`}>
+            <ShoppingBag className="h-6 w-6" />
+            <span className={`absolute right-1 top-1 h-3 w-3 rounded-full ${statusColor}`}></span>
+            <span className={`absolute right-1 top-1 h-3 w-3 rounded-full ${statusColor} animate-ping`}></span>
           </Button>
         </DialogTrigger>
       </div>

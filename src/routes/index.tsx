@@ -166,7 +166,7 @@ function MenuPage() {
         </SheetContent>
       </Sheet>
 
-      <ActiveOrderBar />
+      <ActiveOrderBar hasCartBar={cart.count > 0} />
     </div>
   );
 }
