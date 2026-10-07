@@ -34,7 +34,6 @@ export function ActiveOrderBar({ hasCartBar }: { hasCartBar?: boolean }) {
         .from("orders")
         .select("*, order_items(*)")
         .eq("user_id", user.id)
-        .neq("status", "entregue")
         .order("created_at", { ascending: false })
         .limit(1)
         .single();
@@ -48,10 +47,10 @@ export function ActiveOrderBar({ hasCartBar }: { hasCartBar?: boolean }) {
 
   const statusColor = {
     "recebido": "bg-yellow-500",
-    "preparando": "bg-blue-500",
+    "preparando": "bg-orange-500",
     "pronto": "bg-green-500",
-    "saiu": "bg-purple-500",
-    "entregue": "bg-gray-500",
+    "saiu": "bg-blue-500",
+    "entregue": "bg-green-500",
   }[activeOrder.status] || "bg-gray-500";
 
   return (
