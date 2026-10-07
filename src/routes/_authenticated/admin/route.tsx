@@ -1,8 +1,7 @@
 import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useIsAdmin } from "@/hooks/useAuth";
 import { SiteHeader } from "@/components/SiteHeader";
-import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 import { cn } from "@/lib/utils";
 
@@ -26,9 +25,7 @@ function AdminLayout() {
     <div className="min-h-screen">
       <SiteHeader />
       <div className="absolute top-4 right-4">
-        <Button variant="ghost" size="icon">
-          <Menu className="h-5 w-5" />
-        </Button>
+        <SidebarTrigger />
       </div>
       {isAdmin === null ? (
         <p className="p-8 text-muted-foreground">Verificando acesso...</p>
