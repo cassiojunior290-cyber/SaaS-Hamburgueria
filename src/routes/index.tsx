@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { menuQuery } from "@/lib/menu";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/hooks/useAuth";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { brl } from "@/lib/format";
 import { StoreInfo } from "@/components/StoreInfo";
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,8 @@ export const Route = createFileRoute("/")({
 function MenuPage() {
   const { data, isLoading, error } = useQuery(menuQuery);
   const cart = useCart();
+  const { user } = useAuth();
+  const isAdmin = useIsAdmin(user);
   const [open, setOpen] = useState(false);
   const [activeCat, setActiveCat] = useState<string | null>(null);
   const [branding, setBranding] = useState<StoreBranding | null>(null);
@@ -49,6 +52,11 @@ function MenuPage() {
   const settings = data?.settings;
   const isOpen = settings?.is_open ?? false;
   const fee = Number(settings?.delivery_fee ?? 0);
+
+  async function logout() {
+    await supabase.auth.signOut();
+    window.location.reload();
+  }
 
   useEffect(() => {
     async function fetchBranding() {
@@ -158,15 +166,15 @@ function MenuPage() {
         }}
       />
 
-      <Sheet open={menuOpen} onOpenChange={setMenuOpen} side="right">
-        <SheetContent className="w-72 sm:max-w-sm">
+      <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
+        <SheetContent side="right" className="w-72 sm:max-w-sm">
           <SheetHeader>
             <SheetTitle className="font-display">Menu</SheetTitle>
           </SheetHeader>
           <div className="flex flex-1 flex-col gap-4 px-4 pb-6">
             <Link to="/" className="text-primary hover:underline">Cardápio</Link>
             <Link to="/meus-pedidos" className="text-primary hover:underline">Meus pedidos</Link>
-            {user?.is_admin && <Link to="/admin" className="text-primary hover:underline">Painel Admin</Link>}
+            {isAdmin && <Link to="/admin" className="text-primary hover:underline">Painel Admin</Link>}
             {!user ? (
               <Link to="/auth" className="text-primary hover:underline">Entrar</Link>
             ) : (
@@ -176,8 +184,8 @@ function MenuPage() {
         </SheetContent>
       </Sheet>
 
-      <Sheet open={open} onOpenChange={setOpen} side="right">
-        <SheetContent className="w-72 sm:max-w-sm">
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetContent side="right" className="w-72 sm:max-w-sm">
           <SheetHeader>
             <SheetTitle className="font-display">Seu pedido</SheetTitle>
           </SheetHeader>
