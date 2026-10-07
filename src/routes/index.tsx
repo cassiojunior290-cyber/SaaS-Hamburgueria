@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { menuQuery } from "@/lib/menu";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/hooks/useAuth";
-import { brl } from "@/lib/format";
+import { brl, STATUS_LABEL } from "@/lib/format";
 import { SiteHeader } from "@/components/SiteHeader";
 import { StoreInfo } from "@/components/StoreInfo";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,6 @@ import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ProductDialog, type MenuProduct } from "@/components/ProductDialog";
-import { ActiveOrderBar } from "@/components/ActiveOrderBar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface StoreBranding {
@@ -165,8 +164,6 @@ function MenuPage() {
           <CartAndCheckout fee={fee} isOpen={isOpen} onDone={() => setOpen(false)} />
         </SheetContent>
       </Sheet>
-
-      <ActiveOrderBar hasCartBar={cart.count > 0} />
     </div>
   );
 }
@@ -319,12 +316,12 @@ function CartAndCheckout({ fee, isOpen, onDone }: { fee: number; isOpen: boolean
               <div className="flex items-center gap-2">
                 <span className={`h-3 w-3 rounded-full ${{
                   "recebido": "bg-yellow-500",
-                  "preparando": "bg-blue-500",
+                  "preparando": "bg-orange-500",
                   "pronto": "bg-green-500",
-                  "saiu": "bg-purple-500",
-                  "entregue": "bg-gray-500",
+                  "saiu": "bg-blue-500",
+                  "entregue": "bg-green-500",
                 }[activeOrder.status] || "bg-gray-500"}`}></span>
-                <span className="font-semibold">Status: {STATUS_LABEL[activeOrder.status]}</span>
+                <span className="font-semibold">Status: {STATUS_LABEL[activeOrder.status] ?? "Em andamento"}</span>
               </div>
               <div>
                 <h3 className="font-semibold">Itens do Pedido</h3>
