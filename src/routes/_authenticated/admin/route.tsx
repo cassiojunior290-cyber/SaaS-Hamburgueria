@@ -2,7 +2,6 @@ import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-rout
 import { useIsAdmin } from "@/hooks/useAuth";
 import { SiteHeader } from "@/components/SiteHeader";
 
-
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — CARTOON BURGUER" }, { name: "robots", content: "noindex" }] }),
   component: AdminLayout,

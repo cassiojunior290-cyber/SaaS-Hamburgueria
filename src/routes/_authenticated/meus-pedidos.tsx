@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { OrderCard } from "@/components/OrderCard";
 
-
 export const Route = createFileRoute("/_authenticated/meus-pedidos")({
   head: () => ({
     meta: [

@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, LogIn, LogOut, Menu, Receipt } from "lucide-react";
+import { LayoutDashboard, LogIn, LogOut, Menu, Receipt, Store } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, useIsAdmin } from "@/hooks/useAuth";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-
 
 export function SiteHeader() {
   const { user } = useAuth();
@@ -17,11 +15,14 @@ export function SiteHeader() {
 
   return (
     <div className="relative">
-      <div className="flex items-center justify-between p-4">
-        <Button variant="ghost" size="icon" onClick={() => setOpen(true)} aria-label="Abrir menu">
-          <Menu className="h-6 w-6" />
-        </Button>
-      </div>
+      <button
+        type="button"
+        aria-label="Abrir menu"
+        onClick={() => setOpen(true)}
+        className="absolute top-4 right-4 z-10 rounded-full p-2 bg-black/40 text-white backdrop-blur-md hover:bg-black/50 shadow-md"
+      >
+        <Menu className="h-6 w-6" />
+      </button>
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="right" className="w-72">
@@ -30,7 +31,7 @@ export function SiteHeader() {
           </SheetHeader>
           <nav className="mt-6 flex flex-col divide-y divide-border" onClick={() => setOpen(false)}>
             <Link to="/" className={`${item} font-body`} activeOptions={{ exact: true }} activeProps={{ className: "text-foreground font-bold" }}>
-              <Receipt className="h-5 w-5" /> Cardápio
+              <Store className="h-5 w-5" /> Cardápio
             </Link>
             {user ? (
               <>

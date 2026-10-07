@@ -6,10 +6,10 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { menuQuery } from "@/lib/menu";
 import { useCart } from "@/lib/cart";
-import { useAuth, useIsAdmin } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { brl } from "@/lib/format";
-import { StoreInfo } from "@/components/StoreInfo";
 import { SiteHeader } from "@/components/SiteHeader";
+import { StoreInfo } from "@/components/StoreInfo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,7 +22,6 @@ interface StoreBranding {
   banner_url: string | null;
   logo_url: string | null;
 }
-
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -41,22 +40,14 @@ export const Route = createFileRoute("/")({
 function MenuPage() {
   const { data, isLoading, error } = useQuery(menuQuery);
   const cart = useCart();
-  const { user } = useAuth();
-  const isAdmin = useIsAdmin(user);
   const [open, setOpen] = useState(false);
   const [activeCat, setActiveCat] = useState<string | null>(null);
   const [branding, setBranding] = useState<StoreBranding | null>(null);
   const [selected, setSelected] = useState<MenuProduct | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const settings = data?.settings;
   const isOpen = settings?.is_open ?? false;
   const fee = Number(settings?.delivery_fee ?? 0);
-
-  async function logout() {
-    await supabase.auth.signOut();
-    window.location.reload();
-  }
 
   useEffect(() => {
     async function fetchBranding() {
@@ -73,13 +64,7 @@ function MenuPage() {
   return (
     <div className="min-h-screen pb-28">
       <SiteHeader />
-      {branding?.banner_url && (
-        <div className="relative">
-          <img src={branding.banner_url} alt="Banner" className="w-full h-64 object-cover rounded-b-2xl" />
-        </div>
-      )}
-
-      <section className="mx-auto max-w-6xl sm:px-4">
+      <section className="mx-auto max-w-6xl sm:px-4 sm:pt-4">
         <StoreInfo />
       </section>
 
@@ -102,7 +87,9 @@ function MenuPage() {
                     window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - offset, behavior: "smooth" });
                   }
                 }}
-                className={`snap-start whitespace-nowrap rounded-full border px-4 py-1.5 text-sm font-semibold transition-all duration-300 ease-out ${activeCat === c.id ? "-translate-y-0.5 border-primary bg-primary text-primary-foreground shadow-md" : "border-border hover:-translate-y-0.5 hover:border-primary"}`}
+                className={`snap-start whitespace-nowrap rounded-full border px-4 py-1.5 text-sm font-semibold transition-all duration-300 ease-out ${
+                  activeCat === c.id ? "-translate-y-0.5 border-primary bg-primary text-primary-foreground shadow-md" : "border-border hover:-translate-y-0.5 hover:border-primary"
+                }`}
               >
                 {c.name}
               </a>
@@ -144,6 +131,17 @@ function MenuPage() {
         })}
       </main>
 
+      {cart.count > 0 && (
+        <div className="fixed inset-x-0 bottom-0 z-30 p-4">
+          <Button className="mx-auto flex h-14 w-full max-w-md justify-between rounded-2xl text-base shadow-lg" onClick={() => setOpen(true)}>
+            <span className="flex items-center gap-2">
+              <ShoppingBag className="h-5 w-5" /> Ver carrinho ({cart.count})
+            </span>
+            <span>{brl(cart.subtotal)}</span>
+          </Button>
+        </div>
+      )}
+
       <ProductDialog
         product={selected}
         products={data?.products ?? []}
@@ -157,43 +155,14 @@ function MenuPage() {
         }}
       />
 
-      <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-        <SheetContent side="right" className="w-72 sm:max-w-sm">
-          <SheetHeader>
-            <SheetTitle className="font-display">Menu</SheetTitle>
-          </SheetHeader>
-          <div className="flex flex-1 flex-col gap-4 px-4 pb-6">
-            <Link to="/" className="text-primary hover:underline" onClick={() => setMenuOpen(false)}>Cardápio</Link>
-            <Link to="/meus-pedidos" className="text-primary hover:underline" onClick={() => setMenuOpen(false)}>Meus pedidos</Link>
-            {isAdmin && <Link to="/admin" className="text-primary hover:underline" onClick={() => setMenuOpen(false)}>Painel Admin</Link>}
-            {!user ? (
-              <Link to="/auth" className="text-primary hover:underline" onClick={() => setMenuOpen(false)}>Entrar</Link>
-            ) : (
-              <Button variant="ghost" className="justify-start text-primary hover:underline" onClick={logout}>Sair</Button>
-            )}
-          </div>
-        </SheetContent>
-      </Sheet>
-
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="right" className="w-72 sm:max-w-sm">
+        <SheetContent className="flex w-full flex-col overflow-y-auto sm:max-w-md">
           <SheetHeader>
             <SheetTitle className="font-display">Seu pedido</SheetTitle>
           </SheetHeader>
           <CartAndCheckout fee={fee} isOpen={isOpen} onDone={() => setOpen(false)} />
         </SheetContent>
       </Sheet>
-
-      {cart.count > 0 && (
-        <div className="fixed inset-x-0 bottom-0 z-30 p-4">
-          <Button className="mx-auto flex h-14 w-full max-w-md justify-between rounded-2xl text-base shadow-lg bg-yellow-500 hover:bg-yellow-600" onClick={() => setOpen(true)}>
-            <span className="flex items-center gap-2">
-              <ShoppingBag className="h-5 w-5" /> Ver carrinho ({cart.count})
-            </span>
-            <span>{brl(cart.subtotal)}</span>
-          </Button>
-        </div>
-      )}
     </div>
   );
 }
@@ -246,6 +215,7 @@ function CartAndCheckout({ fee, isOpen, onDone }: { fee: number; isOpen: boolean
     qc.invalidateQueries({ queryKey: ["my-orders"] });
     toast.success("Pedido enviado!");
     onDone();
+    navigate({ to: "/meus-pedidos" });
   }
 
   return (
