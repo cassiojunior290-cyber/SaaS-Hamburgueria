@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ProductDialog, type MenuProduct } from "@/components/ProductDialog";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 interface StoreBranding {
   banner_url: string | null;
@@ -74,14 +75,9 @@ function MenuPage() {
       {branding?.banner_url && (
         <div className="relative">
           <img src={branding.banner_url} alt="Banner" className="w-full h-64 object-cover rounded-b-2xl" />
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-4 top-4 z-20 h-11 w-11 rounded-full bg-black/40 text-white backdrop-blur-md hover:bg-black/60 shadow-lg"
-            onClick={() => setMenuOpen(true)}
-          >
-            <Menu className="h-6 w-6" />
-          </Button>
+          <div className="absolute top-4 right-4">
+            <SidebarTrigger />
+          </div>
         </div>
       )}
 
