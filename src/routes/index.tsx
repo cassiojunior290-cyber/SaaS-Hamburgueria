@@ -104,9 +104,7 @@ function MenuPage() {
                     window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - offset, behavior: "smooth" });
                   }
                 }}
-                className={`snap-start whitespace-nowrap rounded-full border px-4 py-1.5 text-sm font-semibold transition-all duration-300 ease-out ${
-                  activeCat === c.id ? "-translate-y-0.5 border-primary bg-primary text-primary-foreground shadow-md" : "border-border hover:-translate-y-0.5 hover:border-primary"
-                }`}
+                className={`snap-start whitespace-nowrap rounded-full border px-4 py-1.5 text-sm font-semibold transition-all duration-300 ease-out ${activeCat === c.id ? "-translate-y-0.5 border-primary bg-primary text-primary-foreground shadow-md" : "border-border hover:-translate-y-0.5 hover:border-primary"}`}
               >
                 {c.name}
               </a>
