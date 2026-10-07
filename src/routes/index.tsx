@@ -6,8 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { menuQuery } from "@/lib/menu";
 import { useCart } from "@/lib/cart";
-import { useAuth } from "@/hooks/useAuth";
-import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { useAuth, useIsAdmin } from "@/hooks/useAuth";
 import { brl } from "@/lib/format";
 import { StoreInfo } from "@/components/StoreInfo";
 import { Button } from "@/components/ui/button";
@@ -172,11 +171,11 @@ function MenuPage() {
             <SheetTitle className="font-display">Menu</SheetTitle>
           </SheetHeader>
           <div className="flex flex-1 flex-col gap-4 px-4 pb-6">
-            <Link to="/" className="text-primary hover:underline">Cardápio</Link>
-            <Link to="/meus-pedidos" className="text-primary hover:underline">Meus pedidos</Link>
-            {isAdmin && <Link to="/admin" className="text-primary hover:underline">Painel Admin</Link>}
+            <Link to="/" className="text-primary hover:underline" onClick={() => setMenuOpen(false)}>Cardápio</Link>
+            <Link to="/meus-pedidos" className="text-primary hover:underline" onClick={() => setMenuOpen(false)}>Meus pedidos</Link>
+            {isAdmin && <Link to="/admin" className="text-primary hover:underline" onClick={() => setMenuOpen(false)}>Painel Admin</Link>}
             {!user ? (
-              <Link to="/auth" className="text-primary hover:underline">Entrar</Link>
+              <Link to="/auth" className="text-primary hover:underline" onClick={() => setMenuOpen(false)}>Entrar</Link>
             ) : (
               <Button variant="ghost" className="justify-start text-primary hover:underline" onClick={logout}>Sair</Button>
             )}
