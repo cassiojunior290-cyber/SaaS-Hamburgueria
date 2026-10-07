@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { STATUS_LABEL } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ShoppingBag } from "lucide-react";
+import { Bike, ShoppingBag } from "lucide-react";
 import { useState } from "react";
 
 
@@ -53,12 +53,20 @@ export function ActiveOrderBar({ hasCartBar }: { hasCartBar?: boolean }) {
     "entregue": "bg-green-500",
   }[activeOrder.status] || "bg-gray-500";
 
+  const statusIcon = {
+    "recebido": <ShoppingBag className="h-6 w-6" />,
+    "preparando": <ShoppingBag className="h-6 w-6" />,
+    "pronto": <ShoppingBag className="h-6 w-6" />,
+    "saiu": <Bike className="h-6 w-6" />,
+    "entregue": <ShoppingBag className="h-6 w-6" />,
+  }[activeOrder.status] || <ShoppingBag className="h-6 w-6" />;
+
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <div className={`fixed right-6 z-40 ${hasCartBar ? "bottom-24" : "bottom-6"}`}>
         <DialogTrigger asChild>
           <Button className={`relative h-14 w-14 rounded-full bg-card shadow-lg transition-transform active:scale-95 hover:scale-105`}>
-            <ShoppingBag className="h-6 w-6" />
+            {statusIcon}
             <span className={`absolute right-1 top-1 h-3 w-3 rounded-full ${statusColor}`}></span>
             <span className={`absolute right-1 top-1 h-3 w-3 rounded-full ${statusColor} animate-ping`}></span>
           </Button>
