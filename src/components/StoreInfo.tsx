@@ -7,7 +7,6 @@ interface StoreInfoData {
   store_name: string | null;
   delivery_fee: number | null;
   is_open: boolean | null;
-  banner_url: string | null;
   logo_url: string | null;
   address: string | null;
   bio: string | null;
@@ -38,10 +37,6 @@ export function StoreInfo() {
 
   return (
     <div className="relative">
-      <div className="relative h-52 w-full overflow-hidden bg-muted sm:h-72 sm:rounded-t-3xl">
-        {s.banner_url && <img src={s.banner_url} alt="Banner da loja" className="h-full w-full object-cover" />}
-      </div>
-
       <div className="relative -mt-10 rounded-t-[32px] bg-card px-5 pb-6 pt-16 text-center [box-shadow:var(--shadow-soft)] sm:rounded-b-3xl">
         <div className="absolute left-1/2 top-0 h-28 w-28 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full border-4 border-card bg-card [box-shadow:var(--shadow-lift)]">
           {s.logo_url && <img src={s.logo_url} alt="Logo da loja" className="h-full w-full object-cover" />}
