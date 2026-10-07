@@ -64,13 +64,9 @@ function MenuPage() {
 
   return (
     <div className="min-h-screen pb-28">
-      <section className="mx-auto max-w-6xl sm:px-4 sm:pt-4">
-        <StoreInfo />
-      </section>
-
       {branding?.banner_url && (
         <div className="relative">
-          <img src={branding.banner_url} alt="Banner" className="w-full rounded-b-2xl" />
+          <img src={branding.banner_url} alt="Banner" className="w-full h-64 object-cover rounded-b-2xl" />
           <Button
             variant="ghost"
             size="icon"
@@ -81,6 +77,10 @@ function MenuPage() {
           </Button>
         </div>
       )}
+
+      <section className="mx-auto max-w-6xl sm:px-4">
+        <StoreInfo />
+      </section>
 
       {data && data.categories.length > 0 && (
         <nav className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur">
