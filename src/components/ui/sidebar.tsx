@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { PanelLeft } from "lucide-react";
+import { PanelLeft, Home, ShoppingCart, Settings } from "lucide-react";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
@@ -24,6 +24,12 @@ const SIDEBAR_WIDTH = "16rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
+
+const sidebarIcons = {
+  home: Home,
+  orders: ShoppingCart,
+  settings: Settings,
+};
 
 type SidebarContextProps = {
   state: "expanded" | "collapsed";
@@ -523,6 +529,7 @@ const SidebarMenuButton = React.forwardRef<
     asChild?: boolean;
     isActive?: boolean;
     tooltip?: string | React.ComponentProps<typeof TooltipContent>;
+    icon?: keyof typeof sidebarIcons;
   } & VariantProps<typeof sidebarMenuButtonVariants>
 >(
   (
@@ -532,13 +539,16 @@ const SidebarMenuButton = React.forwardRef<
       variant = "default",
       size = "default",
       tooltip,
+      icon,
       className,
+      children,
       ...props
     },
     ref,
   ) => {
     const Comp = asChild ? Slot : "button";
     const { isMobile, state } = useSidebar();
+    const Icon = icon ? sidebarIcons[icon] : null;
 
     const button = (
       <Comp
@@ -548,7 +558,10 @@ const SidebarMenuButton = React.forwardRef<
         data-active={isActive}
         className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
         {...props}
-      />
+      >
+        {Icon && <Icon className="size-4" />}
+        <span>{children}</span>
+      </Comp>
     );
 
     if (!tooltip) {
@@ -687,9 +700,11 @@ const SidebarMenuSubButton = React.forwardRef<
     asChild?: boolean;
     size?: "sm" | "md";
     isActive?: boolean;
+    icon?: keyof typeof sidebarIcons;
   }
->(({ asChild = false, size = "md", isActive, className, ...props }, ref) => {
+>(({ asChild = false, size = "md", isActive, icon, className, children, ...props }, ref) => {
   const Comp = asChild ? Slot : "a";
+  const Icon = icon ? sidebarIcons[icon] : null;
 
   return (
     <Comp
@@ -706,7 +721,10 @@ const SidebarMenuSubButton = React.forwardRef<
         className,
       )}
       {...props}
-    />
+    >
+      {Icon && <Icon className="size-4" />}
+      <span>{children}</span>
+    </Comp>
   );
 });
 SidebarMenuSubButton.displayName = "SidebarMenuSubButton";
