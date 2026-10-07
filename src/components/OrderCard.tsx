@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { PrintableReceipt } from "@/components/PrintableReceipt";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Bluetooth, BluetoothOff } from "lucide-react";
+import { toast } from "sonner";
+import { useBluetoothPrinter } from "@/lib/bluetoothPrinter";
 
 
 type Order = {
