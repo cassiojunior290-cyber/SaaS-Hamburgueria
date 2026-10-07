@@ -1,14 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Trash2, Menu, Truck } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { menuQuery } from "@/lib/menu";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/hooks/useAuth";
 import { brl, STATUS_LABEL } from "@/lib/format";
-import { SiteHeader } from "@/components/SiteHeader";
 import { StoreInfo } from "@/components/StoreInfo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,12 +16,12 @@ import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ProductDialog, type MenuProduct } from "@/components/ProductDialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface StoreBranding {
   banner_url: string | null;
   logo_url: string | null;
 }
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -45,6 +44,7 @@ function MenuPage() {
   const [activeCat, setActiveCat] = useState<string | null>(null);
   const [branding, setBranding] = useState<StoreBranding | null>(null);
   const [selected, setSelected] = useState<MenuProduct | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const settings = data?.settings;
   const isOpen = settings?.is_open ?? false;
@@ -64,10 +64,23 @@ function MenuPage() {
 
   return (
     <div className="min-h-screen pb-28">
-      <SiteHeader />
       <section className="mx-auto max-w-6xl sm:px-4 sm:pt-4">
         <StoreInfo />
       </section>
+
+      {branding?.banner_url && (
+        <div className="relative">
+          <img src={branding.banner_url} alt="Banner" className="w-full rounded-b-2xl" />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-4 top-4 z-20 h-11 w-11 rounded-full bg-black/40 text-white backdrop-blur-md hover:bg-black/60 shadow-lg"
+            onClick={() => setMenuOpen(true)}
+          >
+            <Menu className="h-6 w-6" />
+          </Button>
+        </div>
+      )}
 
       {data && data.categories.length > 0 && (
         <nav className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur">
@@ -132,17 +145,6 @@ function MenuPage() {
         })}
       </main>
 
-      {cart.count > 0 && (
-        <div className="fixed inset-x-0 bottom-0 z-30 p-4">
-          <Button className="mx-auto flex h-14 w-full max-w-md justify-between rounded-2xl text-base shadow-lg" onClick={() => setOpen(true)}>
-            <span className="flex items-center gap-2">
-              <ShoppingBag className="h-5 w-5" /> Ver carrinho ({cart.count})
-            </span>
-            <span>{brl(cart.subtotal)}</span>
-          </Button>
-        </div>
-      )}
-
       <ProductDialog
         product={selected}
         products={data?.products ?? []}
@@ -156,6 +158,18 @@ function MenuPage() {
         }}
       />
 
+      <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
+        <SheetContent className="flex w-full flex-col overflow-y-auto sm:max-w-md">
+          <SheetHeader>
+            <SheetTitle className="font-display">Menu</SheetTitle>
+          </SheetHeader>
+          <div className="flex flex-1 flex-col gap-4 px-4 pb-6">
+            <Link to="/meus-pedidos" className="text-primary hover:underline">Meus pedidos</Link>
+            <OrderStatus />
+          </div>
+        </SheetContent>
+      </Sheet>
+
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent className="flex w-full flex-col overflow-y-auto sm:max-w-md">
           <SheetHeader>
@@ -164,20 +178,14 @@ function MenuPage() {
           <CartAndCheckout fee={fee} isOpen={isOpen} onDone={() => setOpen(false)} />
         </SheetContent>
       </Sheet>
+
+      <BottomBar />
     </div>
   );
 }
 
-function CartAndCheckout({ fee, isOpen, onDone }: { fee: number; isOpen: boolean; onDone: () => void }) {
-  const cart = useCart();
+function OrderStatus() {
   const { user } = useAuth();
-  const navigate = useNavigate();
-  const qc = useQueryClient();
-  const [form, setForm] = useState({ name: "", phone: "", address: "", notes: "", payment: "pix" });
-  const [sending, setSending] = useState(false);
-  const [activeTab, setActiveTab] = useState("carrinho");
-  const total = cart.subtotal + fee;
-
   const { data: activeOrder } = useQuery({
     queryKey: ["active-order"],
     queryFn: async () => {
@@ -195,6 +203,92 @@ function CartAndCheckout({ fee, isOpen, onDone }: { fee: number; isOpen: boolean
     },
     enabled: !!user,
   });
+
+  if (!activeOrder) return null;
+
+  const statusSteps = ["recebido", "preparando", "pronto", "saiu"];
+  const currentStep = statusSteps.indexOf(activeOrder.status);
+
+  return (
+    <div className="mt-4 rounded-xl bg-muted/60 p-3 border border-border/50">
+      <div className="flex justify-between mb-2">
+        <span className="font-semibold">Pedido #{activeOrder.id.substring(0, 4)}</span>
+        <span className="font-semibold">{brl(activeOrder.total)}</span>
+      </div>
+      <div className="flex justify-between mb-2">
+        {statusSteps.map((step, index) => (
+          <div key={step} className={`flex-1 h-2 rounded-full mx-1 ${index <= currentStep ? "bg-primary" : "bg-muted"}`}></div>
+        ))}
+      </div>
+      <div className="flex justify-between text-xs mb-2">
+        <span>Recebido</span>
+        <span>Em preparo</span>
+        <span>Saiu para entrega</span>
+        <span>Entregue</span>
+      </div>
+      <Link to="/meus-pedidos" className="text-sm text-primary hover:underline">Ver detalhes do pedido</Link>
+    </div>
+  );
+}
+
+function BottomBar() {
+  const cart = useCart();
+  const { user } = useAuth();
+  const { data: activeOrder } = useQuery({
+    queryKey: ["active-order"],
+    queryFn: async () => {
+      if (!user) return null;
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*, order_items(*)")
+        .eq("user_id", user.id)
+        .neq("status", "entregue")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+      if (error) return null;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  if (cart.count > 0) {
+    return (
+      <div className="fixed inset-x-0 bottom-0 z-30 p-4">
+        <Button className="mx-auto flex h-14 w-full max-w-md justify-between rounded-2xl text-base shadow-lg bg-yellow-500 hover:bg-yellow-600" onClick={() => setOpen(true)}>
+          <span className="flex items-center gap-2">
+            <ShoppingBag className="h-5 w-5" /> Ver carrinho ({cart.count})
+          </span>
+          <span>{brl(cart.subtotal)}</span>
+        </Button>
+      </div>
+    );
+  } else if (activeOrder) {
+    return (
+      <div className="fixed inset-x-0 bottom-0 z-30 p-4">
+        <Button asChild className="mx-auto flex h-14 w-full max-w-md justify-between rounded-2xl text-base shadow-lg bg-muted hover:bg-muted/90">
+          <Link to="/meus-pedidos">
+            <span className="flex items-center gap-2">
+              <Truck className="h-5 w-5" /> Acompanhar pedido (#{activeOrder.id.substring(0, 4)})
+            </span>
+            <span>{STATUS_LABEL[activeOrder.status]}</span>
+          </Link>
+        </Button>
+      </div>
+    );
+  }
+
+  return null;
+}
+
+function CartAndCheckout({ fee, isOpen, onDone }: { fee: number; isOpen: boolean; onDone: () => void }) {
+  const cart = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const qc = useQueryClient();
+  const [form, setForm] = useState({ name: "", phone: "", address: "", notes: "", payment: "pix" });
+  const [sending, setSending] = useState(false);
+  const total = cart.subtotal + fee;
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -235,113 +329,73 @@ function CartAndCheckout({ fee, isOpen, onDone }: { fee: number; isOpen: boolean
     qc.invalidateQueries({ queryKey: ["my-orders"] });
     toast.success("Pedido enviado!");
     onDone();
-    setActiveTab("acompanhar");
   }
 
   return (
     <div className="flex flex-1 flex-col gap-4 px-4 pb-6">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="carrinho">Carrinho</TabsTrigger>
-          {activeOrder && <TabsTrigger value="acompanhar">Acompanhar Pedido</TabsTrigger>}
-        </TabsList>
-        <TabsContent value="carrinho">
-          <ul className="divide-y divide-border">
-            {cart.items.map((i) => (
-              <li key={i.id} className="flex items-center gap-3 py-3">
-                <div className="flex-1">
-                  <p className="font-semibold">{i.name}</p>
-                  <p className="text-sm text-muted-foreground">{brl(i.price * i.quantity)}</p>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => cart.setQty(i.id, i.quantity - 1)} aria-label="Diminuir">
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                  <span className="w-6 text-center font-semibold">{i.quantity}</span>
-                  <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => cart.setQty(i.id, i.quantity + 1)} aria-label="Aumentar">
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                  <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => cart.remove(i.id)} aria-label="Remover">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </li>
-            ))}
-            {cart.items.length === 0 && <li className="py-6 text-center text-muted-foreground">Carrinho vazio.</li>}
-          </ul>
-
-          <div className="space-y-1 rounded-xl bg-muted p-4 text-sm">
-            <div className="flex justify-between"><span>Subtotal</span><span>{brl(cart.subtotal)}</span></div>
-            <div className="flex justify-between"><span>Entrega</span><span>{brl(fee)}</span></div>
-            <div className="flex justify-between pt-1 text-base font-bold"><span>Total</span><span>{brl(total)}</span></div>
-          </div>
-
-          {!isOpen ? (
-            <p className="rounded-xl bg-destructive/10 p-3 text-sm text-destructive">A loja está fechada no momento.</p>
-          ) : !user ? (
-            <Button asChild size="lg">
-              <Link to="/auth">Entre para finalizar o pedido</Link>
-            </Button>
-          ) : (
-            cart.items.length > 0 && (
-              <form onSubmit={submit} className="space-y-3">
-                <div><Label htmlFor="n">Nome</Label><Input id="n" maxLength={100} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
-                <div><Label htmlFor="t">Telefone</Label><Input id="t" type="tel" maxLength={20} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
-                <div><Label htmlFor="a">Endereço</Label><Textarea id="a" rows={2} maxLength={300} value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} /></div>
-                <div><Label htmlFor="o">Observações</Label><Textarea id="o" rows={2} maxLength={300} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></div>
-                <div>
-                  <Label>Pagamento na entrega</Label>
-                  <RadioGroup value={form.payment} onValueChange={(v) => setForm({ ...form, payment: v })} className="mt-2 grid grid-cols-3 gap-2">
-                    {[
-                      "dinheiro",
-                      "pix",
-                      "cartao"
-                    ].map((v) => (
-                      <Label key={v} className="flex cursor-pointer items-center gap-2 rounded-lg border border-border p-3 has-[:checked]:border-primary">
-                        <RadioGroupItem value={v} /> {v === "dinheiro" ? "Dinheiro" : v === "pix" ? "Pix" : "Cartão"}
-                      </Label>
-                    ))}
-                  </RadioGroup>
-                </div>
-                <Button type="submit" size="lg" className="w-full" disabled={sending}>
-                  {sending ? "Enviando..." : `Confirmar pedido • ${brl(total)}`}
-                </Button>
-              </form>
-            )
-          )}
-        </TabsContent>
-        {activeOrder && (
-          <TabsContent value="acompanhar">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <span className={`h-3 w-3 rounded-full ${{
-                  "recebido": "bg-yellow-500",
-                  "preparando": "bg-orange-500",
-                  "pronto": "bg-green-500",
-                  "saiu": "bg-blue-500",
-                  "entregue": "bg-green-500",
-                }[activeOrder.status] || "bg-gray-500"}`}></span>
-                <span className="font-semibold">Status: {STATUS_LABEL[activeOrder.status] ?? "Em andamento"}</span>
-              </div>
-              <div>
-                <h3 className="font-semibold">Itens do Pedido</h3>
-                <ul className="mt-2 space-y-1">
-                  {activeOrder.order_items.map((item) => (
-                    <li key={item.id} className="flex justify-between">
-                      <span>{item.quantity}x {item.product_name}</span>
-                      <span>{brl(Number(item.unit_price) * item.quantity)}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="flex justify-between font-semibold">
-                <span>Total</span>
-                <span>{brl(activeOrder.total)}</span>
-              </div>
+      <ul className="divide-y divide-border">
+        {cart.items.map((i) => (
+          <li key={i.id} className="flex items-center gap-3 py-3">
+            <div className="flex-1">
+              <p className="font-semibold">{i.name}</p>
+              <p className="text-sm text-muted-foreground">{brl(i.price * i.quantity)}</p>
             </div>
-          </TabsContent>
-        )}
-      </Tabs>
+            <div className="flex items-center gap-1">
+              <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => cart.setQty(i.id, i.quantity - 1)} aria-label="Diminuir">
+                <Minus className="h-4 w-4" />
+              </Button>
+              <span className="w-6 text-center font-semibold">{i.quantity}</span>
+              <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => cart.setQty(i.id, i.quantity + 1)} aria-label="Aumentar">
+                <Plus className="h-4 w-4" />
+              </Button>
+              <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => cart.remove(i.id)} aria-label="Remover">
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          </li>
+        ))}
+        {cart.items.length === 0 && <li className="py-6 text-center text-muted-foreground">Carrinho vazio.</li>}
+      </ul>
+
+      <div className="space-y-1 rounded-xl bg-muted p-4 text-sm">
+        <div className="flex justify-between"><span>Subtotal</span><span>{brl(cart.subtotal)}</span></div>
+        <div className="flex justify-between"><span>Entrega</span><span>{brl(fee)}</span></div>
+        <div className="flex justify-between pt-1 text-base font-bold"><span>Total</span><span>{brl(total)}</span></div>
+      </div>
+
+      {!isOpen ? (
+        <p className="rounded-xl bg-destructive/10 p-3 text-sm text-destructive">A loja está fechada no momento.</p>
+      ) : !user ? (
+        <Button asChild size="lg">
+          <Link to="/auth">Entre para finalizar o pedido</Link>
+        </Button>
+      ) : (
+        cart.items.length > 0 && (
+          <form onSubmit={submit} className="space-y-3">
+            <div><Label htmlFor="n">Nome</Label><Input id="n" maxLength={100} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
+            <div><Label htmlFor="t">Telefone</Label><Input id="t" type="tel" maxLength={20} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
+            <div><Label htmlFor="a">Endereço</Label><Textarea id="a" rows={2} maxLength={300} value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} /></div>
+            <div><Label htmlFor="o">Observações</Label><Textarea id="o" rows={2} maxLength={300} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></div>
+            <div>
+              <Label>Pagamento na entrega</Label>
+              <RadioGroup value={form.payment} onValueChange={(v) => setForm({ ...form, payment: v })} className="mt-2 grid grid-cols-3 gap-2">
+                {[
+                  "dinheiro",
+                  "pix",
+                  "cartao"
+                ].map((v) => (
+                  <Label key={v} className="flex cursor-pointer items-center gap-2 rounded-lg border border-border p-3 has-[:checked]:border-primary">
+                    <RadioGroupItem value={v} /> {v === "dinheiro" ? "Dinheiro" : v === "pix" ? "Pix" : "Cartão"}
+                  </Label>
+                ))}
+              </RadioGroup>
+            </div>
+            <Button type="submit" size="lg" className="w-full" disabled={sending}>
+              {sending ? "Enviando..." : `Confirmar pedido • ${brl(total)}`}
+            </Button>
+          </form>
+        )
+      )}
     </div>
   );
 }
