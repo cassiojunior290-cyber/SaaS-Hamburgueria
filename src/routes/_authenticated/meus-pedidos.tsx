@@ -3,6 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { OrderCard } from "@/components/OrderCard";
+import { Button } from "@/components/ui/button";
+import { Link } from "@tanstack/react-router";
+
 
 export const Route = createFileRoute("/_authenticated/meus-pedidos")({
   head: () => ({
@@ -40,7 +43,19 @@ function MyOrders() {
         <h1 className="mb-6 text-3xl">Meus pedidos</h1>
         {isLoading && <p className="text-muted-foreground">Carregando...</p>}
         {data?.length === 0 && <p className="text-muted-foreground">Você ainda não fez pedidos.</p>}
-        <div className="space-y-4">{data?.map((o) => <OrderCard key={o.id} order={o} />)}</div>
+        <div className="space-y-4">
+          {data?.map((o) => (
+            <OrderCard
+              key={o.id}
+              order={o}
+              actions={o.tracking_token && (
+                <Button asChild variant="outline" size="sm">
+                  <Link to="/acompanhar-pedido/$token" params={{ token: o.tracking_token }}>Acompanhar pedido</Link>
+                </Button>
+              )}
+            />
+          ))}
+        </div>
       </main>
     </div>
   );

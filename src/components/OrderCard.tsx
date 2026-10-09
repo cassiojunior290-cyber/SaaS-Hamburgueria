@@ -20,6 +20,7 @@ type Order = {
   delivery_fee: number;
   total: number;
   status: string;
+  tracking_token: string | null;
   order_items: { id: string; product_name: string; unit_price: number; quantity: number }[];
 };
 
