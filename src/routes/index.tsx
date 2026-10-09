@@ -23,6 +23,10 @@ interface StoreBranding {
   logo_url: string | null;
 }
 
+function generateTrackingToken() {
+  return Math.random().toString(36).substring(2, 12);
+}
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -44,6 +48,7 @@ function MenuPage() {
   const [activeCat, setActiveCat] = useState<string | null>(null);
   const [branding, setBranding] = useState<StoreBranding | null>(null);
   const [selected, setSelected] = useState<MenuProduct | null>(null);
+  const [trackingToken, setTrackingToken] = useState<string | null>(null);
 
   const settings = data?.settings;
   const isOpen = settings?.is_open ?? false;
@@ -160,14 +165,29 @@ function MenuPage() {
           <SheetHeader>
             <SheetTitle className="font-display">Seu pedido</SheetTitle>
           </SheetHeader>
-          <CartAndCheckout fee={fee} isOpen={isOpen} onDone={() => setOpen(false)} />
+          <CartAndCheckout fee={fee} isOpen={isOpen} onDone={() => setOpen(false)} setTrackingToken={setTrackingToken} />
         </SheetContent>
       </Sheet>
+
+      {trackingToken && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="rounded-lg bg-white p-6 shadow-xl">
+            <h2 className="mb-4 text-xl font-bold">Pedido enviado!</h2>
+            <p className="mb-2">Aqui está o link para acompanhar seu pedido:</p>
+            <div className="mb-4 rounded bg-gray-100 p-2">
+              <a href={`/acompanhar-pedido/${trackingToken}`} className="text-blue-600 hover:underline">
+                {window.location.origin}/acompanhar-pedido/{trackingToken}
+              </a>
+            </div>
+            <Button onClick={() => setTrackingToken(null)}>Fechar</Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function CartAndCheckout({ fee, isOpen, onDone }: { fee: number; isOpen: boolean; onDone: () => void }) {
+function CartAndCheckout({ fee, isOpen, onDone, setTrackingToken }: { fee: number; isOpen: boolean; onDone: () => void; setTrackingToken: (token: string) => void }) {
   const cart = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -184,6 +204,7 @@ function CartAndCheckout({ fee, isOpen, onDone }: { fee: number; isOpen: boolean
       return;
     }
     setSending(true);
+    const trackingToken = generateTrackingToken();
     const { data: order, error } = await supabase
       .from("orders")
       .insert({
@@ -195,6 +216,7 @@ function CartAndCheckout({ fee, isOpen, onDone }: { fee: number; isOpen: boolean
         payment_method: form.payment,
         delivery_fee: fee,
         total,
+        tracking_token: trackingToken,
       })
       .select("id")
       .single();
@@ -215,7 +237,7 @@ function CartAndCheckout({ fee, isOpen, onDone }: { fee: number; isOpen: boolean
     qc.invalidateQueries({ queryKey: ["my-orders"] });
     toast.success("Pedido enviado!");
     onDone();
-    navigate({ to: "/meus-pedidos" });
+    setTrackingToken(trackingToken);
   }
 
   return (
@@ -266,7 +288,11 @@ function CartAndCheckout({ fee, isOpen, onDone }: { fee: number; isOpen: boolean
             <div>
               <Label>Pagamento na entrega</Label>
               <RadioGroup value={form.payment} onValueChange={(v) => setForm({ ...form, payment: v })} className="mt-2 grid grid-cols-3 gap-2">
-                {["dinheiro", "pix", "cartao"].map((v) => (
+                {[
+                  "dinheiro",
+                  "pix",
+                  "cartao",
+                ].map((v) => (
                   <Label key={v} className="flex cursor-pointer items-center gap-2 rounded-lg border border-border p-3 has-[:checked]:border-primary">
                     <RadioGroupItem value={v} /> {v === "dinheiro" ? "Dinheiro" : v === "pix" ? "Pix" : "Cartão"}
                   </Label>

@@ -18,6 +18,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminCategoriasRouteImport } from './routes/_authenticated/admin/categorias'
 import { Route as AuthenticatedAdminLojaRouteImport } from './routes/_authenticated/admin/loja'
 import { Route as AuthenticatedAdminProdutosRouteImport } from './routes/_authenticated/admin/produtos'
+import { Route as AcompanharPedidoRouteImport } from './routes/acompanhar-pedido.$token'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -66,6 +67,11 @@ const AuthenticatedAdminProdutosRoute =
     path: '/produtos',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AcompanharPedidoRoute = AcompanharPedidoRouteImport.update({
+  id: '/acompanhar-pedido/$token',
+  path: '/acompanhar-pedido/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/admin/loja': typeof AuthenticatedAdminLojaRoute
   '/admin/produtos': typeof AuthenticatedAdminProdutosRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/acompanhar-pedido/$token': typeof AcompanharPedidoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/admin/loja': typeof AuthenticatedAdminLojaRoute
   '/admin/produtos': typeof AuthenticatedAdminProdutosRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/acompanhar-pedido/$token': typeof AcompanharPedidoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -97,6 +105,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/loja': typeof AuthenticatedAdminLojaRoute
   '/_authenticated/admin/produtos': typeof AuthenticatedAdminProdutosRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/acompanhar-pedido/$token': typeof AcompanharPedidoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/admin/loja'
     | '/admin/produtos'
     | '/admin/'
+    | '/acompanhar-pedido/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -118,6 +128,7 @@ export interface FileRouteTypes {
     | '/admin/loja'
     | '/admin/produtos'
     | '/admin'
+    | '/acompanhar-pedido/$token'
   id:
     | '__root__'
     | '/'
@@ -129,12 +140,14 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/loja'
     | '/_authenticated/admin/produtos'
     | '/_authenticated/admin/'
+    | '/acompanhar-pedido/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  AcompanharPedidoRoute: typeof AcompanharPedidoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -202,6 +215,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminProdutosRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/acompanhar-pedido/$token': {
+      id: '/acompanhar-pedido/$token'
+      path: '/acompanhar-pedido/$token'
+      fullPath: '/acompanhar-pedido/$token'
+      preLoaderRoute: typeof AcompanharPedidoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -242,6 +262,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  AcompanharPedidoRoute: AcompanharPedidoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
