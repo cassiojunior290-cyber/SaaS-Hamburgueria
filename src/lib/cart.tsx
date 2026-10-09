@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
+
 export type CartItem = { id: string; name: string; price: number; image_url: string | null; quantity: number };
 
 type CartCtx = {
@@ -15,9 +16,22 @@ type CartCtx = {
 const Ctx = createContext<CartCtx | null>(null);
 const KEY = "cartoon-cart";
 
+function validatePhone(phone: string): boolean {
+  const phoneRegex = /^\(?\d{2}\)?[\s-]?[\s9]?\d{4}-?\d{4}$/;
+  return phoneRegex.test(phone);
+}
+
+function validateForm(customerName: string, address: string, phone: string): boolean {
+  if (!customerName.trim() || !address.trim() || !phone.trim()) {
+    return false;
+  }
+  return validatePhone(phone);
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     try {
@@ -44,7 +58,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const subtotal = items.reduce((s, i) => s + i.price * i.quantity, 0);
   const count = items.reduce((s, i) => s + i.quantity, 0);
 
-  return <Ctx.Provider value={{ items, add, setQty, remove, clear, subtotal, count }}>{children}</Ctx.Provider>;
+  return (
+    <Ctx.Provider value={{ items, add, setQty, remove, clear, subtotal, count, isSubmitting, setIsSubmitting, validateForm }}>
+      {children}
+    </Ctx.Provider>
+  );
 }
 
 export function useCart() {
