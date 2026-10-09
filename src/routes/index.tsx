@@ -24,7 +24,9 @@ interface StoreBranding {
 }
 
 function generateTrackingToken() {
-  return Math.random().toString(36).substring(2, 12);
+  const array = new Uint32Array(1);
+  crypto.getRandomValues(array);
+  return array[0].toString(36).substring(0, 12);
 }
 
 export const Route = createFileRoute("/")({

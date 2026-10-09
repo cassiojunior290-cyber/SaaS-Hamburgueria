@@ -8,15 +8,9 @@ import { brl } from "@/lib/format";
 
 interface Order {
   id: string;
-  customer_name: string;
-  phone: string;
-  address: string;
-  notes: string | null;
-  payment_method: string;
-  delivery_fee: number;
-  total: number;
   status: string;
-  created_at: string;
+  total: number;
+  delivery_fee: number;
   order_items: {
     id: string;
     product_name: string;
@@ -44,15 +38,11 @@ function TrackOrder() {
   const { data: order, isLoading, error } = useQuery({
     queryKey: ["track-order", token],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("orders")
-        .select("*")
-        .eq("tracking_token", token)
-        .single();
+      const { data, error } = await supabase.rpc("get_order_status", { token });
       if (error) throw error;
       return data;
     },
-    refetchInterval: 20000,
+    refetchInterval: 10000,
   });
 
   if (isLoading) return (
@@ -111,14 +101,6 @@ function TrackOrder() {
                 <div className="flex justify-between"><span>Subtotal</span><span>{brl(order.total - order.delivery_fee)}</span></div>
                 <div className="flex justify-between"><span>Entrega</span><span>{brl(order.delivery_fee)}</span></div>
                 <div className="flex justify-between pt-1 text-base font-bold"><span>Total</span><span>{brl(order.total)}</span></div>
-              </div>
-              <div>
-                <h2 className="mb-2 text-lg font-semibold">Informações de entrega</h2>
-                <p><strong>Nome:</strong> {order.customer_name}</p>
-                <p><strong>Telefone:</strong> {order.phone}</p>
-                <p><strong>Endereço:</strong> {order.address}</p>
-                {order.notes && <p><strong>Observações:</strong> {order.notes}</p>}
-                <p><strong>Pagamento:</strong> {order.payment_method === "dinheiro" ? "Dinheiro" : order.payment_method === "pix" ? "Pix" : "Cartão"}</p>
               </div>
             </div>
           </CardContent>
